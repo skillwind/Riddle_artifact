@@ -1,0 +1,158 @@
+== Internationalize your application
+
+=== Externalizing messages
+
+Wisdom lets you externalize your messages by creating _properties_ files (containing your
+messages as explained on http://docs.oracle.com/javase/7/docs/api/java/util/PropertyResourceBundle.html[this page]) in
+ the `src/main/resources/i18n` folder. The name of the file lets you configure the locale/languages of the messages
+ contained in the file. Let's see some examples:
+
+* `src/main/resources/i18n/app.properties` provides messages in the default locale
+* `src/main/resources/i18n/app_fr.properties` provides messages in French
+* `src/main/resources/i18n/app_en_US.properties` provides messages in American English
+
+The default locale (empty locale) is used when there is no locale matching the request. Generally
+we use this locale for English messages (but you can configure it using the
+`application.locale` property in the `application.conf` file).
+
+NOTE: Unlike what's said on the Javadoc page, the files containing the messages are read using UTF-8.
+
+You can retrieve messages using the `org.wisdom.api.i18n.InternationalizationService` service:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/controllers/i18n/InternationalizedController.java[tags=retrieve-message]
+----
+
+Notice that you need to specify the language explicitly.
+
+NOTE: The messages do not have to be packaged within the application's bundle, but can be provided in separate
+bundles, even deployed dynamically.
+
+=== Retrieving messages using the request languages
+
+HTTP Requests can specify the expected languages using the `Accept-Language` header. Wisdom parses this header and
+lets you provide the messages in the most suitable language.
+
+To retrieve the messages using the request accepted languages, just use:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/controllers/i18n/InternationalizedController.java[tags=retrieve-message-request]
+----
+
+Wisdom determines what's the best language to use for the request. For example,
+for a request specifying an `Accept-Language` with `en-US,en;q=0.8,de;q=0.6,fr;q=0.4`,
+Wisdom tries to provide the message in American English, then English, then German,
+then French. If none of them are provided, the default locale is used.
+
+=== Use in templates
+
+Using internationalized messages in a template is pretty simple. It relies on the _Thymeleaf_
+syntax:
+
+----
+<p th:utext="#{home.welcome}">Welcome to our grocery store!</p>
+----
+
+A `utext` instructs Wisdom to use an internationalized message specified using `#{key}`. For example,
+the following template uses two internationalized messages:
+
+[source,html,indent=0]
+----
+include::{resourcedir}/templates/snippets/upload/Internationalized.html[tags=content]
+----
+
+Notice that the second message is parameterized.
+
+=== Formatting messages
+
+Messages can be formatted using the `java.text.MessageFormat` format. For example, if you have defined a message like
+ this:
+
+----
+files.summary=The directory {1} contains {0} file(s).
+----
+
+You can then specify parameters as:
+
+----
+i18n.get(request().languages(), "files.summary", dir.list().length, dir.getName())
+----
+
+=== Retrieve messages in JavaScript
+
+The internationalization service can be requested using simple HTTP Requests to retrieve the
+messages. This lets you retrieve the messages from a JavaScript client or anything able to emit a HTTP GET request.
+
+----
+GET http://localhost:9000/i18n/welcome  ===> The message with the welcome key (returned as text)
+GET http://localhost:9000/i18n          ===> All messages (returned as JSON)
+GET http://localhost:9000/i18n/welcome?locale=en  ===> The message with the welcome key in the specified language
+GET http://localhost:9000/i18n?locales=en  ===> All messages in the specified locales (returned as JSON)
+GET http://localhost:9000/bundles/Messages_fr.properties  ===> Gets a Resource Bundle (Java Properties) containing
+all messages in the specified locale (here fr)
+----
+
+Except if specified otherwise, Wisdom computes the language to use according to the request (so according to the
+`ACCEPT-LANGUAGE` header). When retrieving all messages, the JSON structure is composed as follows:
+
+----
+{
+  "files.summary":"The directory {1} contains {0} file(s)",
+  "welcome":"Welcome"
+}
+----
+
+=== Using the JQuery i18n plugin
+
+To use the https://github.com/jquery-i18n-properties/jquery-i18n-properties[JQuery i18n Properties Plugin], just use
+the last URL form: `http://localhost:9000/bundles/Messages_fr.properties`:
+
+---
+jQuery.i18n.properties({
+    name:'Messages',
+    path:'/i18n/bundles/',
+    mode:'both',
+    language:'fr',
+    callback: function() {
+        // We specified mode: 'both' so translated values will be
+        // available as JS vars/functions and as a map
+
+        // Accessing a simple value through the map
+        jQuery.i18n.prop('msg_hello');
+        // Accessing a value with placeholders through the map
+        jQuery.i18n.prop('msg_complex', 'John');
+
+        // Accessing a simple value through a JS variable
+        alert(msg_hello +' '+ msg_world);
+        // Accessing a value with placeholders through a JS function
+        alert(msg_complex('John'));
+    }
+});
+---
+
+=== Using i18next
+
+Wisdom also provide the support of http://i18next.com[i18next].
+
+---
+var option = {
+    resGetPath: '/i18n/bundles/messages.json?locales=__lng__',
+    dynamicLoad: true
+};
+i18n.init(option, function(t) {
+    // translate nav
+    $(".translation").i18n();
+
+    var appName = t("app.welcome");
+    console.log(appName);
+
+});
+---
+
+=== i18n and cache
+
+The internationalization support computes `ETAG` based on the latest modifications of the message for a specific
+locale. That means that requests to retrieve resource bundles (JQuery i18n plugin), messages as JSON format (i18next)
+ and the list of all messages (`/i18n`) support client side caching.

@@ -1,0 +1,18 @@
+<FindBugsFilter>
+	<Match>
+		<Not>
+			<Bug pattern="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE,
+			DM_CONVERT_CASE,
+			SIC_INNER_SHOULD_BE_STATIC,
+			SIC_INNER_SHOULD_BE_STATIC_ANON" />
+		</Not>
+	</Match>
+
+	<!-- All bugs in test classes, except for JUnit-specific bugs -->
+<!-- 	<Match> -->
+<!-- 		<Class name="~.*\.*Test" /> -->
+<!-- 		<Not> -->
+<!-- 			<Bug code="IJU" /> -->
+<!-- 		</Not> -->
+<!-- 	</Match> -->
+</FindBugsFilter>

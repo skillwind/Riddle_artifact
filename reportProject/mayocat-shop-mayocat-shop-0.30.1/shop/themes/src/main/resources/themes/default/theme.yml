@@ -1,0 +1,39 @@
+name: Default
+description: The standard theme
+
+pagination:
+  home:
+    itemsPerPage: 6
+    for: product
+
+images:
+  carousel:
+    width: 960
+    height: 460
+    name: "Carousel"
+    for: product
+  grid:
+    width: 288
+    height: 323
+    name: "Grid layout"
+    for: [product, page]
+  product_big:
+    width: 471
+    height: 457
+    name: "Product page big image"
+    for: product
+  product_thumbnail:
+    width: 63
+    height: 71
+    name: "Thumbnails on product page"
+    for: product
+  site_logo:
+    width: 150
+    height: 150
+    name: Site logo
+    for: tenant
+  post:
+    width: 624
+    height: 354
+    name: Post
+    for: article

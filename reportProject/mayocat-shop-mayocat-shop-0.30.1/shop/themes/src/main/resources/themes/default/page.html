@@ -1,0 +1,24 @@
+<div class="content">
+    {{#page}}
+
+    <article class="contents">
+        <h1>{{title}}</h1>
+        <div>
+            {{content}}
+        </div>
+    </article>
+    <aside>
+        {{#images}}
+        {{#featured}}
+        <div class="featured">
+            <img class="photo" src="{{theme_product_big_url}}" title="{{title}}" alt="{{title}}"
+                 width="471px" height="457px"/>
+        </div>
+        {{/featured}}
+        {{/images}}
+    </aside>
+
+    {{/page}}
+    <div class="clearfix"></div>
+
+</div>

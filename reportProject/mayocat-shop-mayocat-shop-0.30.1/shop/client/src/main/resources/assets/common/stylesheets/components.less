@@ -1,0 +1,809 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+/* Buttons */
+
+.btn {
+  font-family: Arial;
+  font-size: 16px;
+  border: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+input.btn {
+  border: none !important;
+}
+
+.btn-colors(@color) {
+  background: @color;
+
+  &:hover {
+    background: darken(@color, 10%);
+  }
+}
+
+.btn {
+  .btn-colors(#e6e6e6);
+}
+
+.btn-primary {
+  .btn-colors(@linkColor);
+}
+
+// The following colors are the default button colors of Boostrap (v2.3) but a bit lightened up.
+
+.btn-info {
+  .btn-colors(lighten(#2f96b4, 10%));
+}
+
+.btn-success {
+  .btn-colors(lighten(#51a351, 10%));
+}
+
+.btn-warning {
+  .btn-colors(lighten(#f89406, 10%));
+}
+
+.btn-danger {
+  .btn-colors(lighten(#bd362f, 10%));
+}
+
+.btn-inverse {
+  .btn-colors(lighten(#222222, 10%));
+}
+
+/* Entity list selector */
+
+ul.select.entity.list {
+
+  li {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    height: 48px;
+
+    div.thumb {
+      margin-right: 10px;
+    }
+
+    div.action-button, div.entity-title {
+      line-height: 40px;
+    }
+
+    &.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      background-color: white;
+    }
+  }
+}
+
+/* Hoverable list */
+
+ul li.hoverable:hover {
+  background-color: @backgroundLight;
+  cursor: pointer;
+}
+
+ul li.hoverable .visible-when-hover {
+  visibility: hidden;
+}
+
+ul li.hoverable:hover .visible-when-hover {
+  visibility: visible;
+}
+
+/* Thumbnail list */
+
+.entities.thumbnails {
+
+  div.caption {
+    text-overflow: ellipsis;
+     height: 38px;
+     line-height: 15px;
+     line-height: 15px;
+  }
+
+  .menu-wrapper {
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 150px;
+    height: 150px;
+    text-align: center;
+  }
+
+  ul.menu {
+    display: table-cell;
+    background: fade(#000, 70%);
+    vertical-align: middle;
+
+    li {
+      span.btn {
+        opacity: 1.0;
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .wrapper {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    height: 150px;
+    width: 150px;
+    background-color: #eee;
+    z-index: 100;
+  }
+
+  li:not(.ui-sortable-helper) {
+    .wrapper:hover {
+      .menu-wrapper {
+        display:table;
+      }
+    }
+  }
+
+  a {
+    color: white;
+  }
+
+}
+
+.entities.thumbnails.thumbnails-small {
+
+  &.reduce {
+    max-height: 105px;
+    overflow: hidden;
+  }
+
+  .wrapper {
+    display: block;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+
+    &:hover .featured:before {
+      display: none;
+    }
+  }
+
+  .menu-wrapper {
+    width: 100px;
+    height: 100px;
+    cursor: move;
+  }
+
+  .upload-progress {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: fade(#000, 70%);
+
+    svg {
+      position: absolute;
+      top: 50%; left: 50%;
+      margin: -22px 0 0 -22px;
+      width: 44px; height: 44px;
+    }
+  }
+
+  .featured-star {
+    position: absolute;
+    top: 0; right: 0;
+    width: 15px; height: 16px;
+    z-index: 500;
+
+    &:before, &:after {
+      position: absolute;
+    }
+
+    &:after {
+      bottom: 0; left: 0;
+      width: 13px; height: 13px;
+      background: url("/common/images/featured-star.png") 0 26px;
+      content: '';
+    }
+
+    &.featured {
+      cursor: auto;
+
+      &:before {
+        top: 0; right: 0;
+        width: 33px; height: 34px;
+        background: url("/common/images/featured-star.png") 0 0;
+        content: '';
+      }
+
+      &:after {
+        background: url("/common/images/featured-star.png") 0 13px;
+      }
+    }
+  }
+
+}
+
+.trigger-reduce {
+  display: inline-block;
+  margin: 5px 0 7px 0;
+  cursor: pointer;
+}
+
+/* Addons */
+
+.addon-sequence .icon-delete:hover {
+  cursor: pointer;
+}
+
+.addon-sequence .sequence-item {
+  padding-top: 10px;
+  border-bottom: 1px dashed #d3d3d3;
+}
+
+.addon-sequence .sequence-item:last-child {
+  border: none;
+}
+
+.addon-sequence .sequence-item .collapsed {
+  margin-top: -16px;
+  min-height: 25px;
+  max-width: 410px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.addon-sequence .sequence-item .collapsed img {
+  margin-bottom: 8px;
+  margin-right: 5px;
+}
+
+.addon-sequence .add-element.top {
+  margin-bottom: 7px;
+}
+
+
+.addon-sequence .add-element.bottom {
+  margin-top: 7px;
+}
+
+/* Thumbnail editor */
+
+.editImage {
+  width: 850px;
+  margin: 0px 0 0 -425px;
+  top: 50px !important;
+}
+
+.editImage .modal-body {
+  max-height: 550px;
+}
+
+.editImage .modal-body .preview {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+thumbnail-editor img {
+  /* Make sure the "original" dimensions are its real dimensions and that it is not scaled down by max-width: 100% */
+  max-width: inherit !important;
+}
+
+thumbnail-editor > div {
+  min-width: 400px;
+  background-color: #eee;
+  margin-bottom: 8px;
+}
+
+.editImage .crop-zone {
+  margin-right: 10px;
+  padding: 8px;
+  background-color: #eeeeee;
+  ul {
+     width: 400px;
+
+    .btn-primary {
+      margin-left: 10px;
+    }
+  }
+}
+
+.editImage .metadata {
+  input {
+    width: 220px;
+    margin-bottom: 50px;
+  }
+
+  textarea {
+    width: 275px;
+  }
+}
+
+div.thumbnails-list {
+  width: 100px;
+}
+
+div.thumbnails-list span.dimensions {
+  padding-top:10px;
+}
+
+div.thumbnails-list ul li {
+  color: @fontColor;
+  font-size: 11px;
+  padding:2px;
+  position: relative;
+}
+
+div.thumbnails-list ul li div.caption {
+  position: absolute;
+  top: 0;
+}
+
+div.thumbnails-list ul li.active,
+div.thumbnails-list ul li.active {
+  background-color: #eeeeee;
+}
+
+/* Notifications */
+
+.notifications {
+  position: fixed;
+  top: 0; right: 0; left: 239px;
+  font-size: 12px;
+  z-index: 1050;
+
+  &.reduce {
+    left: 418px;
+  }
+}
+
+.notification {
+  position: relative;
+  padding: 0 15px;
+  height: 40px;
+  color: #fff;
+
+  &:before, .text {
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  &:before {
+    height: 100%;
+    content: '';
+  }
+
+  .text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.notification-info {
+  background: @successColor;
+}
+
+.notification-error {
+  background: @errorColor;
+}
+
+.notification-progress {
+  background: fade(@backgroundDarkGreen, 93%);
+  color: #fff;
+
+  &.minified {
+    height: 10px;
+
+    .text {
+      display: none;
+    }
+  }
+
+  .progression {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: fade(@linkColor, 50%);
+  }
+}
+
+/* Drop zone animations **/
+
+@-webkit-keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes drop-zone-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.02);
+    transform: scale(1.02);
+  }
+}
+
+@-webkit-keyframes drop-zone-addon-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.07);
+    transform: scale(1.07);
+  }
+}
+
+@keyframes drop-zone-addon-bounce {
+  0%, 100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+
+  50% {
+    -webkit-transform: scale(1.07);
+    transform: scale(1.07);
+  }
+}
+
+/* Drop zone directive **/
+
+.drop-zones-container {
+  @padding: 100px;
+
+  position: fixed;
+  top: 0; left: 0;
+  display: none;
+  width: 100%; height: 100%;
+  padding: @padding;
+  background: fade(@backgroundDarkGreen, 93%);
+  z-index: 1100;
+
+  &.active {
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+  }
+
+  &.with-addons .drop-zone:not(.addon) .text {
+    top: 35%;
+  }
+
+  .drop-zone {
+    position: relative;
+
+    &:not(.addon) {
+      position: absolute;
+      top: @padding; right: @padding; bottom: @padding; left: @padding;
+      font-size: 28px;
+    }
+
+    &.addon {
+      @margin: 35px;
+
+      -webkit-align-self: flex-end;
+      -ms-align-self: flex-end;
+      align-self: flex-end;
+
+      -webkit-flex-grow: 1;
+      -ms-flex-grow: 1;
+      flex-grow: 1;
+
+      margin: 0 0 @margin @margin;
+      height: 185px;
+      font-size: 18px;
+
+      &:last-child {
+        margin-right: @margin;
+      }
+    }
+
+    &:after {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        url('/common/images/drop-border-h.png') center top repeat-x,
+        url('/common/images/drop-border-h.png') center bottom repeat-x,
+        url('/common/images/drop-border-v.png') left center repeat-y,
+        url('/common/images/drop-border-v.png') right center repeat-y;
+      content: '';
+    }
+
+    &.active:after {
+      background:
+        url('/common/images/drop-border-h-hover.png') center top repeat-x,
+        url('/common/images/drop-border-h-hover.png') center bottom repeat-x,
+        url('/common/images/drop-border-v-hover.png') left center repeat-y,
+        url('/common/images/drop-border-v-hover.png') right center repeat-y;
+    }
+
+    &.active:not(.addon):after {
+      -webkit-animation: drop-zone-bounce 200ms ease-in-out;
+      animation: drop-zone-bounce 200ms ease-in-out;
+    }
+
+    &.active.addon:after {
+      -webkit-animation: drop-zone-addon-bounce 200ms ease-in-out;
+      animation: drop-zone-addon-bounce 200ms ease-in-out;
+    }
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .title + p {
+    font-size: 14px;
+  }
+
+  .text {
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'latolight', sans-serif;
+    color: #fff;
+
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+}
+
+/* Switch button */
+
+switch-button {
+  margin-top: 15px;
+  display: inline-block;
+}
+
+switch-button button {
+  height: 18px;
+}
+
+/* Entity link */
+
+.uri {
+  margin-bottom: 10px;
+  max-width: 250px;
+
+  a {
+    background: url("/common/images/externallinkicon.gif") top right no-repeat;
+    font-family: monospace;
+    color: @fontColor;
+    padding-right: 15px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* List picker (currencies, etc.) */
+
+currency-list-picker currency-picker select {
+  margin-top: 10px;
+}
+
+.pickerElements li {
+  float: left;
+  padding-right: 5px;
+}
+
+/* CKE */
+
+div.cke {
+  margin-bottom: 20px;
+
+  .cke_bottom {
+    /* Hide the footer without changing CKE code */
+    display: none !important;
+  }
+}
+
+/* jScrollPane scroll bars */
+
+.scroll-wrapper .jspTrack {
+  background: transparent;
+  position: relative;
+}
+
+.scroll-wrapper .jspDrag {
+  background: @borderInput;
+  opacity: 0.3;
+  width: 5px;
+  margin-top: 2px;
+}
+
+/*
+ * Wizard
+ *
+ * Adapted from FUEL UX https://github.com/ExactTarget/fuelux
+ *
+ * Fuel UX
+ * https://github.com/ExactTarget/fuelux
+ *
+ * Copyright (c) 2012 ExactTarget
+ * Licensed under the MIT license.
+ */
+.wizard {
+  background-color: @backgroundLighter;
+  border: 1px solid @borderInput;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  *zoom: 1;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+}
+
+.wizard:before,
+.wizard:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.wizard:after {
+  clear: both;
+}
+
+.wizard ul {
+  padding: 0;
+  margin: 0;
+  list-style: none outside none;
+}
+
+.wizard ul li {
+  position: relative;
+  float: left;
+  height: 46px;
+  padding: 0 20px 0 30px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 46px;
+  color: #999999;
+  cursor: default;
+  background: #ededed;
+}
+
+.wizard ul li .chevron {
+  position: absolute;
+  top: 0;
+  right: -14px;
+  display: block;
+  border: 24px solid transparent;
+  border-right: 0;
+  border-left: 14px solid #d4d4d4;
+}
+
+.wizard ul li .chevron:before {
+  position: absolute;
+  top: -24px;
+  right: 1px;
+  display: block;
+  border: 24px solid transparent;
+  border-right: 0;
+  border-left: 14px solid #ededed;
+  content: "";
+}
+
+.wizard ul li.complete {
+  color: #468847;
+  background: #f3f4f5;
+}
+
+.wizard ul li.complete:hover {
+  cursor: pointer;
+  background: #e7eff8;
+}
+
+.wizard ul li.complete:hover .chevron:before {
+  border-left: 14px solid #e7eff8;
+}
+
+.wizard ul li.complete .chevron:before {
+  border-left: 14px solid #f3f4f5;
+}
+
+.wizard ul li.active {
+  color: #3a87ad;
+  background: #f1f6fc;
+}
+
+.wizard ul li.active .chevron:before {
+  border-left: 14px solid #f1f6fc;
+}
+
+.wizard ul li .badge {
+  margin-right: 8px;
+}
+
+.wizard ul li:nth-child(1) {
+  z-index: 10;
+  padding-left: 20px;
+  border-radius: 4px 0 0 4px;
+}
+
+.wizard ul li:nth-child(2) {
+  z-index: 9;
+}
+
+.wizard ul li:nth-child(3) {
+  z-index: 8;
+}
+
+.wizard ul li:nth-child(4) {
+  z-index: 7;
+}
+
+.wizard ul li:nth-child(5) {
+  z-index: 6;
+}
+
+.wizard ul li:nth-child(6) {
+  z-index: 5;
+}
+
+.wizard ul li:nth-child(7) {
+  z-index: 4;
+}
+
+.wizard ul li:nth-child(8) {
+  z-index: 3;
+}
+
+.wizard ul li:nth-child(9) {
+  z-index: 2;
+}
+
+.wizard ul li:nth-child(10) {
+  z-index: 1;
+}
+
+.wizard .actions {
+  float: right;
+  padding-right: 15px;
+  line-height: 44px;
+  vertical-align: middle;
+}
+
+.wizard .actions a {
+  margin-right: 8px;
+  font-size: 12px;
+  line-height: 45px;
+}
+
+.wizard .actions .btn-prev i {
+  margin-right: 5px;
+}
+
+.wizard .actions .btn-next i {
+  margin-left: 5px;
+}
+
+.step-content .step-pane {
+  display: none;
+}
+
+.step-content .active {
+  display: block;
+}

@@ -1,0 +1,55 @@
+<div class="content product">
+    {{#product}}
+
+    <div class="gallery">
+        {{#images}}
+        {{#featured}}
+        <div class="featured">
+            <img class="photo" src="{{theme_product_big_url}}" title="{{title}}" alt="{{title}}"
+                 width="471px" height="457px"/>
+        </div>
+        {{/featured}}
+        <ul class="images">
+            {{#all}}
+            <li class="thumbnail">
+                <img src="{{theme_product_thumbnail_url}}" data-image-src="{{theme_product_big_url}}"/>
+            </li>
+            {{/all}}
+        </ul>
+        <div class="clearfix"></div>
+        {{/images}}
+
+    </div>
+
+    <div class="characteristics">
+        <h1 class="fn">{{title}}</h1>
+
+        {{#description}}
+        <div class="description">
+            {{this}}
+        </div>
+        {{/description}}
+
+        <div class="buying-options">
+            {{#unitPrice}}
+            <div class="price">{{amountCompact}}{{currency.localSymbol}}</div>
+            {{/unitPrice}}
+            {{^unitPrice}}
+            This product is not available for sale.
+            {{/unitPrice}}
+        </div>
+
+        {{#unitPrice}}
+        <form action="/cart/add" method="post" class="add">
+            <div class="add-to-cart">
+                <input type="hidden" name="product" value="{{../slug}}"/>
+                <input type="submit" value="Add to cart" class="button"/>
+            </div>
+        </form>
+        {{/unitPrice}}
+    </div>
+
+    {{/product}}
+    <div class="clearfix"></div>
+
+</div>

@@ -1,0 +1,5 @@
+org.mayocat.authorization.basic.BasicAuthenticator
+org.mayocat.authorization.cookies.CookieAuthenticator
+org.mayocat.authorization.DefaultGatekeeper
+org.mayocat.security.DefaultCipher
+org.mayocat.security.BCryptPasswordManager

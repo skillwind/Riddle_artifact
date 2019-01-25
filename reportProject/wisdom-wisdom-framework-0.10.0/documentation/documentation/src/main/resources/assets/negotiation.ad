@@ -1,0 +1,116 @@
+== Content negotiation
+
+Content negotiation is a mechanism that makes it possible to serve different representation of a same resource (URI).
+ It is useful e.g. for writing Web Services supporting several output formats (XML, JSON, etc.). Server-driven
+ negotiation is essentially performed using the `Accept*` requests headers. You can find more information on content
+ negotiation in the HTTP specification.
+
+=== Language
+You can get the list of acceptable languages for a request using the `request().languages()` method that
+retrieves them from the `Accept-Language` header and sorts them according to their quality value. The return array
+of locale is sorted from the most 'wanted' language to the less 'wanted' one.
+
+=== Content
+Similarly, the `request().mediaTypes()` method gives the list of acceptable result’s MIME types for a
+request. It retrieves them from the `Accept` request header and sorts them according to their quality factor.
+
+The _most_ preferred type can be retrieved using `request().mediaType()`. In addition, you can test if a
+given MIME type is acceptable for the current request using the `request().accepts()` method:
+
+[source, java]
+----
+public Result list() {
+  if (request().accepts("text/html")) {
+    return ok(result).html();
+  } else {
+    return ok(result).json();
+  }
+}
+----
+
+If you don't specify the content type of your result, Wisdom tries to serialize your result to an `ACCEPT`-ed content
+ type. For instance, in the following example, the result form depends on the `ACCEPT` header value of the request.
+ If it's `application/json`, `result` is serialized to JSON, if it's `application/xml`, then the XML serializer is
+ applied.
+
+[source, java]
+----
+public Result list() {
+  return ok(result);
+}
+----
+
+=== Configure Routes using Accepts and Produces
+
+Each route can specifies the media type is accepts and the media types it produces. These metadata are used by the
+router to select the right route to invoke for a specific request.
+
+The following snippet shows how routes can specify the media types it produces:
+
+[source, java]
+----
+include::{sourcedir}/controllers/RouterExample.java[tags=negotiationBasedOnProduces]
+----
+
+The route is selected according to the client's `ACCEPT` header. If none matches, a `NOT ACCEPTABLE` result is
+returned.
+
+Routes can also specify the mime types it can _consume_:
+
+[source, java]
+----
+include::{sourcedir}/controllers/RouterExample.java[tags=negotiationBasedOnAccepts]
+----
+
+The route is selected according to the client's `CONTENT-TYPE` header. If none matches, an `UNSUPPORTED MEDIA TYPE`
+result is returned.
+
+Routes can combine both parameters and provides several values to each of them:
+
+[source, java]
+----
+include::{sourcedir}/controllers/RouterExample.java[tags=negotiationBasedOnAcceptsAndProduces]
+----
+
+Notice that the `accepts` parameter can receive wildcards such as `text/*`.
+
+TIP: Wisdom adds the `VARY` header to indicate on which criteria the route has been selected.
+
+=== Using Negotiation methods
+
+Negotiation can become very complex if you have more than two possibilities.  Fortunately, Wisdom provides helper
+methods to ease the development of action methods producing several results. The following example
+shows how to produce different types of results depending on the `Accept` HTTP header from the
+request.
+
+[source, java]
+----
+@Route(method = HttpMethod.GET, uri = "/negotiation/accept")
+public Result negotiation() {
+    return Negotiation.accept(
+            ImmutableMap.of(
+                    MimeTypes.JSON, ok("{\"message\":\"hello\"}").json(),
+                    MimeTypes.HTML, ok("<h1>Hello</h1>").html()
+            )
+    );
+}
+----
+
+Notice that the `accept` method generates a `406` response if the are no suitable possibilities.
+
+TIP: To avoid computing all the results, it's recommended to use `async` results:
+
+[source, java]
+----
+@Route(method = HttpMethod.GET, uri = "/negotiation/accept")
+public Result negotiation() {
+    return Negotiation.accept(
+            ImmutableMap.of(
+                    MimeTypes.JSON, async( () -> ok("{\"message\":\"hello\"}").json(); ),
+                    MimeTypes.HTML, async( () -> ok("<h1>Hello</h1>").html(); )
+            )
+    );
+}
+----
+
+

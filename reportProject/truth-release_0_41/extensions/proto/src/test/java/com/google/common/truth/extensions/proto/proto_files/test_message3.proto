@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package com.google.common.truth.extensions.proto;
+
+option java_package = "com.google.common.truth.extensions.proto";
+option java_multiple_files = true;
+option java_api_version = 2;
+
+// For brevity: o_ means 'optional', r_ means 'repeated'
+
+// This file must be kept in sync with test_message2.proto for tests to work.
+// Field names and field numbers should all match. Features supported in one
+// syntax but not the other are commented out in the other file.
+
+message TestMessage3 {
+  enum TestEnum3 {
+    DEFAULT = 0;
+    ONE = 1;
+    TWO = 2;
+  }
+
+  int32 o_int = 1;
+  repeated string r_string = 2;
+  // optional int64 o_long_defaults_to_42 = 3 [default = 42];
+  TestEnum3 o_enum = 4;
+  float o_float = 5;
+  double o_double = 6;
+
+  // optional RequiredStringMessage3 o_required_string_message = 7;
+  // repeated RequiredStringMessage3 r_required_string_message = 8;
+  TestMessage3 o_test_message = 9;
+  repeated TestMessage3 r_test_message = 10;
+  SubTestMessage3 o_sub_test_message = 11;
+  repeated SubTestMessage3 r_sub_test_message = 12;
+  map<string, TestMessage3> test_message_map = 13;
+}
+
+// message RequiredStringMessage3 {
+//   required string required_string = 1;
+// }
+
+message SubTestMessage3 {
+  int32 o_int = 1;
+  repeated string r_string = 2;
+
+  TestMessage3 o_test_message = 3;
+  SubSubTestMessage3 o_sub_sub_test_message = 4;
+}
+
+message SubSubTestMessage3 {
+  int32 o_int = 1;
+  repeated string r_string = 2;
+}

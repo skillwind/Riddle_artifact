@@ -1,0 +1,272 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en" ng-app="MayocatShop"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" ng-app="MayocatShop"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width"/>
+
+    <title ng-bind="$root.page_title">Mayocat | Home</title>
+
+    <!-- Included CSS Files -->
+    <link rel="stylesheet" href="/common/vendor/bootstrap/2.3.1/bootstrap-mayocat.css">
+    <link rel="stylesheet/less" href="/common/stylesheets/common.less"/>
+    <link rel="stylesheet/less" href="stylesheets/mayocat.less"/>
+    <link rel="stylesheet" href="/common/vendor/blueimp/jquery.fileupload-ui.css"/>
+    <link rel="stylesheet" href="/common/vendor/jcrop/css/jquery.Jcrop.min.css"/>
+    <link rel="stylesheet" href="/common/vendor/bootstrap/contrib/bootstrap-datepicker.css"/>
+    <link rel="stylesheet" href="/common/vendor/jscrollpane/jquery.jscrollpane.css"/>
+
+    <!-- Vendor scripts -->
+    <script src="/common/vendor/jquery.js"></script>
+    <script src="/common/vendor/jquery-ui-1.9.0.custom.min.js"></script>
+    <script src="/common/vendor/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
+    <script src="/common/vendor/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
+    <script src="/common/vendor/bootstrap/2.3.1/js/bootstrap-dropdown.js"></script>
+    <script src="/common/vendor/bootstrap/contrib/bootstrap-datepicker.js"></script>
+    <script src="/common/vendor/angular/1.1.5/angular.min.js"></script>
+    <script src="/common/vendor/angular/1.1.5/angular-resource.min.js"></script>
+    <script src="/common/vendor/angular/contrib/ui-bootstrap.js"></script>
+    <script src="/common/vendor/angular/contrib/ui-sortable.js"></script>
+    <script src="/common/vendor/angular/contrib/angular-translate.min.js"></script>
+    <script src="/common/vendor/angular/contrib/angular-translate-interpolation-messageformat.min.js"></script>
+    <script src="/common/vendor/messageformat/messageformat.min.js"></script>
+    <script src="/common/vendor/messageformat/locales.js"></script>
+    <script src="/common/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
+    <script src="/common/vendor/moment.min.js"></script>
+    <script src="/common/vendor/blueimp/jquery.fileupload.js"></script>
+    <script src="/common/vendor/blueimp/jquery.iframe-transport.js"></script>
+    <script src="/common/vendor/blueimp/load-image.min.js"></script>
+    <script src="/common/vendor/blueimp/canvas-to-blob.min.js"></script>
+    <script src="/common/vendor/blueimp/jquery.fileupload-fp.js"></script>
+    <script src="/common/vendor/jquery.mousewheel.js"></script>
+    <script src="/common/vendor/jscrollpane/jquery.jscrollpane.min.js"></script>
+    <script src="/common/vendor/cubiq/iscroll4.js"></script>
+
+    <script src="vendor/angular-strap.min.js"></script>
+
+    <script src="/common/vendor/ckeditor/4.1/ckeditor.js"></script>
+    <script src="/common/vendor/ckeditor/4.1/plugins/mayoimage/plugin.js"></script>
+
+    <script>
+        // <![CDATA[
+        less = {
+            strictMath: true
+        }
+        // ]]>
+    </script>
+    <script src="/common/vendor/lesscss/less-1.4.2.min.js"></script>
+
+    <!-- Application scripts -->
+    <script src="/common/javascripts/polyfill.js"></script>
+    <script src="/common/javascripts/mayocat.js"></script>
+    <script src="/common/javascripts/authentication.js"></script>
+    <script src="/common/javascripts/addons.js"></script>
+    <script src="/common/javascripts/time.js"></script>
+    <script src="/common/javascripts/locales.js"></script>
+    <script src="/common/javascripts/image.js"></script>
+    <script src="/common/javascripts/configuration.js"></script>
+    <script src="/common/javascripts/mixins.js"></script>
+    <script src="/common/javascripts/entities.js"></script>
+    <script src="/common/javascripts/upload.js"></script>
+    <script src="/common/javascripts/notifications.js"></script>
+
+    <script src="javascripts/appsettings.js"></script>
+    <script src="javascripts/settings.js"></script>
+    <script src="javascripts/app.js"></script>
+    <script src="javascripts/money.js"></script>
+    <script src="javascripts/shipping.js"></script>
+    <script src="javascripts/search.js"></script>
+    <script src="javascripts/catalog.js"></script>
+    <script src="javascripts/pages.js"></script>
+    <script src="javascripts/page.js"></script>
+    <script src="javascripts/articles.js"></script>
+    <script src="javascripts/article.js"></script>
+    <script src="javascripts/homePage.js"></script>
+    <script src="javascripts/dashboard.js"></script>
+    <script src="javascripts/orders.js"></script>
+    <script src="javascripts/order.js"></script>
+    <script src="javascripts/product.js"></script>
+    <script src="javascripts/collection.js"></script>
+    <script src="javascripts/localization.js"></script>
+
+    <!-- Localization files -->
+    <script src="localization/en.js"></script>
+    <script src="localization/fr.js"></script>
+
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body ng-controller="AppController" ng-cloak>
+
+<div ng-controller="MenuController">
+
+    <div class="sidebar-nav" ng-show="authenticated && tenant != undefined" ng-contro>
+
+        <header>
+            <div class="logo" ng-click="setRoute('/')"></div>
+            <h2 class="brand" ng-bind="tenant.name" title="{{tenant.name}}"></h2>
+            <p class="host">
+                <!-- Link to host -->
+                <small>
+                    <a class="clickable"
+                       ng-href="{{site.url}}"
+                       ng-bind="site.domain"
+                       title="{{site.domain}}"
+                       target="_new"></a>
+                </small>
+            </p>
+
+            <div class="btn-group">
+                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown">
+                <img src="/common/images/flags/{{uiLocale}}.png"/><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="locale in ['en', 'fr']" ng-click="changeLocale(locale)"><img src="/common/images/flags/{{locale}}.png" /></li>
+                </ul>
+
+            </div>
+
+            <p class="logout">
+                <small ng-click="logout()" class="clickable">{{'authentication.action.logout' | translate}}</small>
+            </p>
+        </header>
+
+        <!-- Orders + Customers -->
+        <ul class="">
+            <li active-class="active">
+                <a href="#/orders">
+                    <h2>{{'order.title.orders' | translate}}</h2>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Products, Contents, Theme, Statistics -->
+        <ul class="">
+            <li active-class="active">
+                <a href="#/catalog" other-active-href="#/collections/,#/products/">
+                    <h2>{{'product.title.products' | translate}}</h2>
+                </a>
+            </li>
+            <li active-class="active">
+                <a href="#/contents" other-active-href="#/pages/,#/news,#/home">
+                    <h2>{{'content.title.contents' | translate}}</h2>
+                </a>
+                <ul ng-show="isNews || isPages || isHomePage" class="sub-menu">
+                    <li active-class="active">
+                        <a href="#/home">
+                            {{'content.title.homePage' | translate}}
+                        </a>
+                    </li>
+                    <li active-class="active">
+                        <a href="#/contents" other-active-href="#/pages/">
+                            {{'content.title.pages' | translate}}
+                        </a>
+                    </li>
+                    <li active-class="active">
+                        <a href="#/news">
+                            {{'content.title.news' | translate}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- Parameters + My account -->
+        <ul class="">
+            <li active-class="active">
+                <a href="#/settings/">
+                    <h2>{{'settings.title.settings' | translate}}</h2>
+                </a>
+            </li>
+        </ul>
+
+    </div>
+
+    <!-- Message show when there is no tenant at this address -->
+    <div class="hero-unit" ng-show="tenant == undefined && authenticated != undefined">
+        <h1>{{'entity.alert.notFound' | translate}}</h1>
+    </div>
+
+    <!-- Main container-->
+    <div id="content" ng-show="authenticated && tenant != undefined">
+
+        <!-- Notifications -->
+        <notifications reduce="isCatalog || isPages || isNews || isSettings"></notifications>
+
+        <!--
+          Since there is no notion of "sub-view" or "multiple views" per route, we include *all* the sub-menus here
+          and display them conditionally at the app controller level.
+          This has the advantage of pre-loading all the subviews controllers/resources, but we have to be careful as the
+          number of sub-views grows that is scales properly and doesn't introduce performance issues (at the UI level,
+          or by making too much AJAX calls at once when the app loads, etc).
+          -->
+        <div ng-include class="sub-list" src="'partials/catalog.html'" ng-show="isCatalog"></div>
+        <div ng-include class="sub-list" src="'partials/pages.html'" ng-show="isPages"></div>
+        <div ng-include class="sub-list" src="'partials/articles.html'" ng-show="isNews"></div>
+        <div ng-include class="sub-list" src="'partials/settingsMenu.html'" ng-show="isSettings"></div>
+
+        <div role="main" id="main" ng-class="{'hasSubList' : isCatalog || isPages || isNews || isSettings}" ng-view></div>
+    </div>
+    <div class="clearfix"></div>
+
+</div>
+
+<!-- Drop zones for the uploads -->
+<drop-zones-container></drop-zones-container>
+
+<!-- Initial AJAX loader -->
+<div class="loader" ng-show="tenant != undefined && authenticated == undefined"></div>
+
+<!-- Login modal -->
+<section id="login-modal" ng-show="tenant != undefined && authenticated != undefined && !authenticated">
+    <form class="login-form" ng-controller="LoginController" ng-class="{'login-error':authenticationFailed}" login-animate>
+        <h1 class="title">{{'authentication.misc.title' | translate}}</h1>
+
+        <p class="text-error" ng-show="authenticationFailed">
+            {{'authentication.alert.failure' | translate}}
+        </p>
+
+        <input class="field" type="text" ng-model="username"
+               placeholder="{{'authentication.misc.username' | translate}}">
+        <input class="field" type="password" ng-model="password"
+               placeholder="{{'authentication.misc.password' | translate}}">
+
+        <label class="checkbox-container">
+            <input type="checkbox" ng-model="remember">
+            <span class="checkbox-icon"></span>
+            {{'authentication.misc.remember' | translate}}
+        </label>
+
+        <input class="btn btn-large btn-primary" type="submit" value="{{'authentication.action.login' | translate}}"
+               ng-click="requestLogin()">
+    </form>
+</section>
+
+<!-- Error modals -->
+
+<script type="text/ng-template" id="serverError.html">
+    <ng-include src="'/common/partials/serverError.html'"></ng-include>
+</script>
+
+<script type="text/ng-template" id="conflictError.html">
+    <ng-include src="'/common/partials/nameConflictError.html?v=2'"></ng-include>
+</script>
+
+</body>
+</html>

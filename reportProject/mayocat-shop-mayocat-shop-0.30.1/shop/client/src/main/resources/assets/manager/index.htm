@@ -1,0 +1,128 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en" ng-app="TenantManager"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" ng-app="TenantManager"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+
+    <title>Tenant Manager</title>
+
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link href="assets/css/bootstrap-responsive.css" rel="stylesheet"> -->
+
+    <!-- Included CSS Files -->
+    <link rel="stylesheet/less" href="/common/vendor/bootstrap/2.3.1/less/bootstrap.less">
+    <link rel="stylesheet/less" href="/common/stylesheets/common.less"/>
+    <link rel="stylesheet/less" href="stylesheets/manager.less"/>
+
+    <!-- Vendor scripts -->
+    <script src="/common/vendor/jquery.js"></script>
+    <script src="/common/vendor/jquery-ui-1.9.0.custom.min.js"></script>
+    <script src="/common/vendor/bootstrap/2.3.1/js/bootstrap-transition.js"></script>
+    <script src="/common/vendor/bootstrap/2.3.1/js/bootstrap-modal.js"></script>
+    <script src="/common/vendor/bootstrap/2.3.1/js/bootstrap-dropdown.js"></script>
+    <script src="/common/vendor/bootstrap/contrib/bootstrap-datepicker.js"></script>
+    <script src="/common/vendor/angular/1.1.5/angular.min.js"></script>
+    <script src="/common/vendor/angular/1.1.5/angular-resource.min.js"></script>
+    <script src="/common/vendor/angular/contrib/ui-bootstrap.js"></script>
+    <script src="/common/vendor/angular/contrib/angular-translate.min.js"></script>
+    <script src="/common/vendor/angular/contrib/angular-translate-interpolation-messageformat.min.js"></script>
+    <script src="/common/vendor/messageformat/messageformat.min.js"></script>
+    <script src="/common/vendor/messageformat/locales.js"></script>
+    <script src="/common/vendor/jcrop/js/jquery.Jcrop.min.js"></script>
+    <script src="/common/vendor/moment.min.js"></script>
+    <script src="/common/vendor/blueimp/jquery.fileupload.js"></script>
+    <script src="/common/vendor/blueimp/jquery.iframe-transport.js"></script>
+    <script src="/common/vendor/blueimp/load-image.min.js"></script>
+    <script src="/common/vendor/blueimp/canvas-to-blob.min.js"></script>
+    <script src="/common/vendor/blueimp/jquery.fileupload-fp.js"></script>
+    <script src="/common/vendor/ckeditor/4.1/ckeditor.js"></script>
+
+    <script src="/common/vendor/lesscss/less-1.4.2.min.js"></script>
+    <!-- Always clear local storage when running with less.js -->
+    <script>localStorage.clear();</script>
+
+    <!-- Application scripts -->
+    <script src="/common/javascripts/mayocat.js"></script>
+    <script src="/common/javascripts/authentication.js"></script>
+    <script src="/common/javascripts/addons.js"></script>
+    <script src="/common/javascripts/time.js"></script>
+    <script src="/common/javascripts/image.js"></script>
+    <script src="/common/javascripts/locales.js"></script>
+    <script src="/common/javascripts/configuration.js"></script>
+    <script src="/common/javascripts/mixins.js"></script>
+    <script src="/common/javascripts/entities.js"></script>
+
+    <script src="javascripts/app.js"></script>
+
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body ng-cloak ng-controller="AppController">
+
+<div ng-controller="ManagerController">
+    <div ng-include="'partials/navbar.html'"></div>
+
+    <div class="container-fluid" ng-show="authenticated">
+        <div class="row-fluid">
+            <div class="span2">
+                <p id="newTenant" ng-show="isHome">
+                    <button class="btn btn-large" type="button" ng-click="setRoute('/tenants/_new')">New tenant</button>
+                </p>
+            </div>
+            <div class="span10">
+                <div role="main" id="main" ng-view></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Initial AJAX loader -->
+    <div class="loader" ng-show="authenticated == undefined"></div>
+
+    <!-- Login modal -->
+    <section id="login-modal" ng-show="authenticated != undefined && !authenticated">
+        <form class="login-form" ng-controller="LoginController" ng-class="{'login-error':authenticationFailed}" login-animate>
+            <h1 class="title">Welcome on Mayocat Shop</h1>
+
+            <p class="text-error" ng-show="authenticationFailed">
+                We could not authenticate you with these credentials.
+            </p>
+
+            <input class="field" type="text" ng-model="username" placeholder="Username">
+            <input class="field" type="password" ng-model="password" placeholder="Password">
+
+            <label class="checkbox-container">
+                <input type="checkbox" ng-model="remember">
+                <span class="checkbox-icon"></span>
+                Remember me
+            </label>
+
+            <input class="btn btn-large btn-primary" type="submit" value="Login" ng-click="requestLogin()">
+        </form>
+    </section>
+
+    <!-- Error modal -->
+
+    <script type="text/ng-template" id="serverError.html">
+        <ng-include src="'/common/partials/serverError.html'"></ng-include>
+    </script>
+
+</div>
+</body>
+</html>

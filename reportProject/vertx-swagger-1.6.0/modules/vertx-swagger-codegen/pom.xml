@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.github.phiz71</groupId>
+    <artifactId>vertx-swagger-parent</artifactId>
+    <version>1.6.0</version>
+    <relativePath>../..</relativePath>
+  </parent>
+  <artifactId>vertx-swagger-codegen</artifactId>
+
+  <name>VertX Swagger Codegen</name>
+
+  <description>A Swagger codegen plugin for Vert.X. Based on the Swagger Router.</description>
+
+  <url>https://github.com/phiz71/vertx-swagger/tree/master/modules/vertx-swagger-codegen</url>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Florent Chamfroy</name>
+      <email>florent.chamfroy@gmail.com</email>
+      <url>https://github.com/phiz71</url>
+      <id>phiz71</id>
+    </developer>
+  </developers>
+
+  <properties>
+    <swagger-codegen.version>2.2.2</swagger-codegen.version>
+    <java.version>1.6</java.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-codegen</artifactId>
+      <version>${swagger-codegen.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-codegen-cli</artifactId>
+      <version>${swagger-codegen.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.phiz71</groupId>
+      <artifactId>vertx-swagger-router</artifactId>
+      <version>${project.parent.version}</version>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources-filtered</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>

@@ -1,0 +1,5 @@
+TARGET_CLASS,criterion,Coverage,Total_Goals,Covered_Goals
+com.hotels.styx.support.api.FakeHttpServer,MTHD_PROB_RISK,0.0,1,0
+com.github.tomakehurst.wiremock.core.WireMockConfiguration,MTHD_PROB_RISK,0.0,1,1
+com.github.tomakehurst.wiremock.core.WireMockConfiguration,MTHD_PROB_RISK,0.0,1,1
+com.github.tomakehurst.wiremock.core.WireMockConfiguration,MTHD_PROB_RISK,0.0,1,1

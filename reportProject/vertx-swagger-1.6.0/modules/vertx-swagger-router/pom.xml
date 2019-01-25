@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.github.phiz71</groupId>
+    <artifactId>vertx-swagger-parent</artifactId>
+    <version>1.6.0</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>vertx-swagger-router</artifactId>
+
+
+  <name>VertX Swagger Router</name>
+  <description>A Vert.X Web Router based on a swagger definition</description>
+
+  <url>https://github.com/phiz71/vertx-swagger/tree/master/modules/vertx-swagger-router</url>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Florent Chamfroy</name>
+      <email>florent.chamfroy@gmail.com</email>
+      <url>https://github.com/phiz71</url>
+      <id>phiz71</id>
+    </developer>
+  </developers>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <vertx.version>3.5.1</vertx.version>
+    <swagger-parser.version>1.0.26</swagger-parser.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-rx-java</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-parser</artifactId>
+      <version>${swagger-parser.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-unit</artifactId>
+      <version>${vertx.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

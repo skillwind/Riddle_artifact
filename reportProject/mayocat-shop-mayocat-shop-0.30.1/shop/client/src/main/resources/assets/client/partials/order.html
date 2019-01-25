@@ -1,0 +1,211 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<h1 class="small" ng-show="!isNew()">{{'order.title.order' | translate}}</h1>
+<span class="pull-right">
+    <a ng-click="setRoute('/orders/')">{{'entity.action.back' | translate}}</a>
+</span>
+
+<div class="entity order" ng-class="{'loading': order.status == undefined}">
+
+    <div ng-show="order.status">
+        <div class="header">
+            <h1>{{'order.misc.orderName' | translate:getTranslationProperties()}} <span ng-class="{'loading': isSaving}"></span></h1>
+
+            <div>{{order.creationDate | iso8601toLocalDate:'LLL'}}</div>
+        </div>
+
+        <div class="block">
+            <h3>
+                {{'order.misc.statusLong' | translate}}
+
+                <small class="link pull-right">
+                    <a ng-click="changeStatus()">
+                        {{'order.misc.changeStatus' | translate}}
+                    </a>
+                </small>
+            </h3>
+
+            <div class="wizard">
+                <ul class="steps">
+                    <li ng-class="{'active': order.status == 'WAITING_FOR_PAYMENT'}">
+                        <span ng-class="{'badge-info': order.status == 'WAITING_FOR_PAYMENT'}" class="badge">1</span>
+                        {{'order.status.waitingForPayment' | translate}}<span class="chevron"></span>
+                    </li>
+                    <li ng-class="{'active': order.status == 'PAID'}">
+                        <span ng-class="{'badge-info': order.status == 'PAID'}" class="badge">2</span>
+                        {{'order.status.paid' | translate}}<span class="chevron"></span>
+                    </li>
+                    <li ng-class="{'active': order.status == 'PREPARED'}">
+                        <span ng-class="{'badge-info': order.status == 'PREPARED'}" class="badge">3</span>
+                        {{'order.status.prepared' | translate}}<span class="chevron"></span>
+                    </li>
+                    <li ng-class="{'active': order.status == 'SHIPPED'}">
+                        <span ng-class="{'badge-info': order.status == 'SHIPPED'}" class="badge">4</span>
+                        {{'order.status.shipped' | translate}}<span class="chevron"></span>
+                    </li>
+                </ul>
+                <div class="actions">
+                    <button class="btn" ng-click="paymentReceived()" ng-show="order.status == 'WAITING_FOR_PAYMENT'">
+                        {{'order.action.paymentReceived' | translate}}
+                    </button>
+                    <button class="btn" ng-click="prepared()" ng-show="order.status == 'PAID'">
+                        {{'order.action.commandPrepared' | translate}}
+                    </button>
+                    <button class="btn" ng-click="shipped()" ng-show="order.status == 'PREPARED'">
+                        {{'order.action.commandShipped' | translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="block">
+            <h3>{{'order.title.items' | translate}}</h3>
+
+            <table class="table">
+                <thead>
+                <th>{{'order.title.item' | translate}}</th>
+                <th>{{'order.misc.unitPrice' | translate}}</th>
+                <th>{{'order.misc.quantity' | translate}}</th>
+                <th>{{'order.misc.total' | translate}}</th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in order.data.items">
+                    <td>
+                        {{item.title}}
+                        <small>
+                            {{item.description}}
+                        </small>
+                        <dl ng-repeat="addon in item.addons"><!-- Future (angular 1.2+) see http://stackoverflow.com/a/16808545/1281372 -->
+                            <dt>{{addon.name}}</dt>
+                            <dd>{{addon.value}}</dd>
+                        </dl>
+
+                    </td>
+                    <td>{{item.unitPrice| money:'EUR'}} {{order.currency}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>{{item.itemTotal | money:'EUR'}} {{order.currency}}</td>
+                </tr>
+                <tr ng-show="order.data.shipping" class="itemsTotal">
+                    <td>
+                        {{'order.misc.itemsTotal' | translate}}
+                    </td>
+                    <td>{{order.itemsTotal | money:'EUR'}} {{order.currency}}</td>
+                    <td>1</td>
+                    <td>{{order.itemsTotal | money:'EUR'}} {{order.currency}}</td>
+                </tr>
+                <tr ng-show="order.data.shipping" class="shipping">
+                    <td>
+                        {{'order.misc.shipping' | translate}} &mdash;
+                        <small>
+                            {{'order.misc.shippingCalculation' | translate:getTranslationProperties()}}
+                        </small>
+                    </td>
+                    <td>{{order.shipping | money:'EUR'}} {{order.currency}}</td>
+                    <td>1</td>
+                    <td>{{order.shipping | money:'EUR'}} {{order.currency}}</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <td colspan="3">{{'order.misc.total' | translate}}</td>
+                <td>{{order.grandTotal | money:'EUR'}} {{order.currency}}</td>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="block">
+            <h3>{{'order.title.customer' | translate}}</h3>
+
+            <div class="vcard">
+                <div>
+                    <span class="fn">{{order.customer.firstName}} {{order.customer.lastName}}</span>
+                </div>
+                <div>
+                    <a class="email" href="mailto:{{order.customer.email}}">{{order.customer.email}}</a>
+                </div>
+                <div>
+                    <a class="email"a href="tel:{{order.customer.phoneNumber}}">{{order.customer.phoneNumber}}</a>
+                </div>
+
+                <div ng-show="order.deliveryAddress">
+                    <strong>{{'order.misc.deliveryAddress' | translate}}</strong>
+
+                    <div class="adr">
+                        <div class="fn">{{order.deliveryAddress.fullName}}</div>
+                        <div class="street-address">{{order.deliveryAddress.street}}</div>
+                        <span class="postal-code">{{order.deliveryAddress.zip}}</span>
+                        <span class="locality">{{order.deliveryAddress.city}}</span>
+                        <div class="country-name">{{order.deliveryAddress.country}}</div>
+                    </div>
+                </div>
+
+                <div ng-show="order.billingAddress">
+                    <strong>{{'order.misc.billingAddress' | translate}}</strong>
+
+                    <div class="adr">
+                        <div class="fn">{{order.billingAddress.fullName}}</div>
+                        <div class="street-address">{{order.billingAddress.street}}</div>
+                        <span class="postal-code">{{order.billingAddress.zip}}</span>
+                        <span class="locality">{{order.billingAddress.city}}</span>
+                        <div class="country-name">{{order.billingAddress.country}}</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="block" ng-show="order.additionalInformation">
+            <h3>{{'order.misc.additionalInformation' | translate}}</h3>
+
+            <div>{{order.additionalInformation}}</div>
+        </div>
+
+        <aside>
+
+
+        </aside>
+    </div>
+</div>
+
+
+<!-- Change status modal -->
+<script type="text/ng-template" id="changeStatus.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="$dismiss()">&times;</button>
+        <h3>{{'order.misc.changeStatus' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+
+            <!-- Status -->
+            <div class="block">
+                <h3>{{'order.misc.statusLong' | translate}}</h3>
+
+                <div>
+                    <select ng-model="order.status">
+                        <option value="WAITING_FOR_PAYMENT">{{'order.status.waitingForPayment' | translate}}</option>
+                        <option value="PAID">{{'order.status.paid' | translate}}</option>
+                        <option value="PREPARED">{{'order.status.prepared' | translate}}</option>
+                        <option value="SHIPPED">{{'order.status.shipped' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" ng-click="$dismiss()">
+            {{'entity.action.cancel' | translate}}
+        </button>
+
+        <button class="btn btn-primary" ng-click="$close()">
+            {{'entity.action.update' | translate}}
+        </button>
+    </div>
+</script>

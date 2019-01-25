@@ -1,0 +1,38 @@
+== Scheduling tasks
+
+Wisdom lets you define periodic jobs. To define a job, you need to:
+
+1. implement the `scheduled` interface, and expose it as a service
+2. add the `@Every` on a method that will be executed periodically
+
+About the first step, if you are in a controller, you just have to implement the `Scheduled`
+interface:
+
+[source, java, indent=0]
+----
+include::{sourcedir}/controllers/ScheduledController.java[tags=scheduled]
+----
+
+If you are not in a controller, you need to use the `@Provides` annotation to expose the service
+(or just use the `@Service` annotation).
+
+[source, java, indent=0]
+----
+include::{sourcedir}/tasks/Printer.java[tags=scheduled]
+----
+
+For each method you want to run periodically, add the `@Every` annotation specifying the period. The period format is
+ very simple:
+
+----
+"1s" : every second
+"1m" : every minute
+"1h" : every hour
+"1d" : every day
+"2h30m" : every 2 hours and 30 minutes
+----
+
+The task is not run immediately but only after the specified period.
+
+TIP: As you can see above, you can also use the `period` and `unit` parameters to configure the period.
+

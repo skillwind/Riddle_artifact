@@ -1,0 +1,24 @@
+<div class="collection content">
+    {{#collection}}
+    <h1 class="fn">{{title}}</h1>
+
+    {{#description}}
+    <p class="description">
+        {{this}}
+    </p>
+    {{/description}}
+
+    {{#any products.list}}
+    <ul class="products">
+        {{#each products.list}}
+        {{includeTemplate "grid_single_product.html"}}
+        {{/each}}
+    </ul>
+    <div class="clearfix"></div>
+    {{/any}}
+    {{#empty products}}
+    There is no product in this category
+    {{/empty}}
+
+    {{/collection}}
+</div>

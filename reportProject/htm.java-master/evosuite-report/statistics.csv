@@ -1,0 +1,6 @@
+TARGET_CLASS,criterion,Coverage,Total_Goals,Covered_Goals
+org.numenta.nupic.Parameters,MTHD_PROB_RISK,0.0,1,0
+org.numenta.nupic.Parameters,MTHD_PROB_RISK,0.0,1,1
+org.numenta.nupic.Parameters,MTHD_PROB_RISK,0.0,1,0
+org.numenta.nupic.Parameters,MTHD_PROB_RISK,0.0,1,1
+org.numenta.nupic.Parameters,MTHD_PROB_RISK,0.0,1,1

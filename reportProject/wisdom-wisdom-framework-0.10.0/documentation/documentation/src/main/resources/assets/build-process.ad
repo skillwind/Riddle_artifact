@@ -1,0 +1,388 @@
+
+== Package, Test, Run your application
+
+Wisdom's build system is based on Apache Maven, so the build process is following the _default_
+Maven lifecycle.
+
+=== Package your application
+
+`mvn package` creates two files: a jar file containing your application, and a zip file containing the whole
+distribution, ready to be deployed.
+
+NOTE: The jar file is an OSGi bundle.
+
+=== Adding dependencies
+
+To add a dependency to your application, just add a `<dependency>` in the `pom.xml`. Wisdom copies all dependencies
+from the `compile` scope (default Maven scope):
+
+[source,xml]
+----
+<dependency>
+	<groupId>asm</groupId>
+	<artifactId>asm-all</artifactId>
+	<version>3.3.1</version>
+</dependency>
+----
+
+However notice two important rules:
+
+ 1. It does not copy transitive dependencies, so don't forget to declare all your dependencies.
+ 2. Only OSGi bundles are copied, so check that your dependencies are valid OSGi bundles.
+
+IMPORTANT: Most libraries are OSGi bundles already.
+
+=== Finding bundles
+
+Unfortunately, you may want to use a library that is not a bundle. When facing this situation, you have 3 choices:
+
+1. Trying to find a _bundlelized_ version of the library
+2. Use the _non-OSGi dependency_ support of Wisdom - Check the <<Using non-OSGi dependencies>> section
+3. Make your own bundle (that you can contribute to the project) - Check the <<Some bundelization rules>> section
+
+You may want to check the bundles available on:
+
+* http://mvnrepository.com/artifact/org.apache.servicemix.bundles[Service Mix Bundles] - Apache Service Mix have
+created lots of bundles of all the dependencies they use
+* http://ebr.springsource.com/repository/app/[Spring Source OSGi Repository] - Spring Source has also created a bunch
+ of bundles you can find on their _Enterprise Bundle Repository_
+
+=== Using non-OSGi dependencies
+
+Unfortunately, not all libraries are OSGi bundles. Fortunately, Wisdom supports non-bundle dependencies. These
+dependencies are copied to the `libs` directory of the Wisdom server and are called _libraries_. These dependencies
+does not need to be OSGi bundles, and can be used by the Wisdom applications.
+
+First add your Maven dependency as usual such as:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.pegdown</groupId>
+  <artifactId>pegdown</artifactId>
+  <version>1.4.2</version>
+</dependency>
+----
+
+Then, you need to select explicitly the libraries from the set of dependencies. Only selected dependencies are
+copied. This selection is made as follows:
+
+[source,xml]
+----
+<plugin>
+  <groupId>${project.groupId}</groupId>
+  <artifactId>wisdom-maven-plugin</artifactId>
+  <version>${project.version}</version>
+  <extensions>true</extensions>
+  <configuration>
+    <!-- Defines the set of 'libraries' -->
+    <libraries>
+      <includes>
+        <!--
+        defines the set of dependencies to select as library (mandatory).
+        it uses the following syntax: groupId:artifactId:type[:classifier]:version
+        -->
+        <include>:pegdown</include>
+      </includes>
+
+      <!--
+      whether or not transitive dependencies of the selected libraries should also
+      be copied (default to true). only 'compile' dependencies are copied.
+      -->
+      <resolveTransitive>true</resolveTransitive>
+
+      <!--
+      whether or not the selected artifacts should be excluded from the 'application'
+       directory (default to false).
+      -->
+      <excludeFromApplication>true</excludeFromApplication>
+
+      <!--
+      allow to exclude some artifacts. This feature is useful when transitive support
+      is enabled to filter out undesirable artifacts.
+      -->
+      <excludes>
+        <exclude>:asm-tree</exclude>
+      </excludes>
+    </libraries>
+  </configuration>
+</plugin>
+----
+
+The `libraries` element configure the selection and behavior. It must contains an `includes` element with at least
+one `include` sub-element. If none are set, no dependencies are considered as libraries.
+
+Using libraries allows you to rely on non-bundle dependencies, but it comes with a couple of limitations:
+
+* the set of libraries is static, so cannot change after the wisdom server has started.
+* there is no dependency resolution at runtime, meaning that all dependencies required by selected libraries must
+also be available from the 'libs' directory.
+
+In other word, libraries are very useful when you can't find a suitable OSGi bundle, but need to be used carefully to
+not break the modularity and dynamism of your applications.
+
+NOTE: The content of the jar files contained in the `libs` directory are exported by the OSGi framework.
+
+IMPORTANT: This feature only works when using Apache Felix.
+
+=== Some bundelization rules
+
+If you want to create your own OSGi bundle, here are some rules:
+
+* Inspect the library to separate the public API from the private / implementation parts - this is particularly
+important to avoid exposing implementation details.
+*  Detect http://docs.oracle.com/javase/6/docs/api/java/lang/ClassLoader.html#loadClass(java.lang.String)[ClassLoader.loadClass] calls, http://docs.oracle.com/javase/6/docs/api/java/lang/ClassLoader.html#findResource(java.lang.String)[ClassLoader.findResource], and more generally all `ClassLoader` access
+* Check whether the code rely on the _Thread Context ClassLoader_, if so, wrap the calls with a TTCL Switch:
+
+[source,java]
+----
+final ClassLoader original = Thread.currentThread().getContextClassLoader();
+try {
+    Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+    // your code using the library.
+} finally {
+    Thread.currentThread().setContextClassLoader(original);
+}
+----
+
+* Detect SPI usage, and try to see if you can create the instance manually and inject it
+* Last but not least, design a service interface, to avoid leaking the whole API - and if it’s possible, make the service interface independent of the library (meaning that you can substitute by another one someday)
+
+=== Run tests
+
+Tests are situated in the `src/test/java` directory.
+
+`mvn test` executes all the unit tests following the Surefire convention. So, it executes all tests from classes
+starting or finishing by `Test`, such as `MyClassTest` or `TestMyClass`.
+
+`mvn integration-test` executes all the integration tests following the Surefire convention. So, it executes all tests
+from classes starting or finishing by `IT`, such as `MyComponentIT` or `ITMyComponent`..
+
+Unit tests are also executed in _watch mode_. It re-executes the unit tests when you change either a Java class or a
+test. By default, all test are re-executed. However, to reduce the amount of test, use:
+
+----
+<testSelectionPolicy>SELECTIVE</testSelectionPolicy>
+----
+
+With the `SELECTIVE` policy, only related tests are executed. Notice that, test failures are reported in the browser.
+ You can skip tests adding the `-DskipTests` flag to the Maven command line.
+
+=== Watch mode
+
+To run the application while developing, launch:
+
+----
+mvn wisdom:run
+----
+
+It packages your application and starts the Wisdom server. It also _watches_ changes you make on your files and
+redeploys _things_ automatically. For instance, if you edit a Java file, it compiles,
+packages and redeploys the application.
+
+WARNING: Modifying the `pom.xml` file relaunches the server automatically.
+
+The wisdom watch mode allows you to use a _remote_ Wisdom server. Using this feature, you can
+_watch_ several project at the same time. To enable this feature launch the watch mode with
+`-DwisdomDirectory=location`.
+
+So, imagine you have two projects, `P1` and `P2`, and `P2` depends on `P1`. You want to enjoy the
+_watch_ mode on both `P1` and `P2` projects, but, as `P2` is your _final_ / _main_ project, you
+also want to immediately copy the `P1`  output to `P2`. In this context, just launch the _watch_
+mode twice as follows:
+
+----
+# P2 - regular watch mode (it starts the server we are going to use in P1)
+mvn wisdom:run
+----
+
+----
+# P1 - watch mode with remote server
+mvn wisdom:run -DwisdomDirectory=../p2/target/wisdom
+----
+
+TIP: Launch the main server first, if not, it may override the copied resources.
+
+WARNING: When you launch the _watch_ mode with the `wisdomDirectory`, some copy functionality
+is disabled  (configuration and external resources). So in our previous example, modifying the
+`P1` configuration, external resources, or templates do not copy them to `P2`. However, as `P2`
+is launched without the parameter, all features are provided.
+
+TIP: The watch mode is based on a File Alteration Monitor (FAM). The default polling period is set to 2 seconds. You
+can configure it using `-Dwatch.period=5`. The set time is in **seconds**.
+
+
+=== Debugging
+
+In watch mode, you can enable the remote debugging by using the `-Ddebug=port`:
+
+----
+mvn wisdom:run -Ddebug=5005
+----
+
+Then, just launch the debug mode of your IDE using the set port (5005 in the previous example).
+
+=== Run the application
+
+The application is assembled in the `target/wisdom` directory. You can run it without the watch mode using:
+
+----
+./chameleon.sh
+----
+
+TIP:Why Chameleon? Because Chameleon is a kind of OSGi distribution with some additional features on which Wisdom
+relies.
+
+=== Accessing the OSGi shell
+
+If you are an OSGi expert and want to access the _shell_ launch the application with:
+
+----
+./chameleon.sh --interactive
+----
+
+The provided shell is http://shelbie.ow2.org/[OW2 Shelbie].
+
+=== The distribution
+
+`mvn package` generates an OSGi bundle (a jar file) and a zip file. The jar file can be deployed into any other
+wisdom application. The zip file contains the whole distribution and can be run using the same shell script as
+previously explained.
+
+=== Customizing applications packaging
+
+Wisdom applications are packaged inside OSGi bundles. By default it:
+
+* includes all classes (from `src/main/java`) and resources (from `src/main/resources`)
+* imports all required packages (deduced by analyzing the classes)
+* exports all packages containing `service(s)`, `api(s)`, `model(s)`, `entity` or `entities`
+
+However, sometimes you want to customize this default packaging policy. Wisdom relies on
+http://www.aqute.biz/Bnd/Bnd[BND] to build bundles. BND is building the OSGi bundle by following a set of _instructions_
+ such as:
+
+----
+Import-Package: com.library.*; version = 1.21
+----
+
+
+To customize the bundle of your application, create a `osgi.bnd` file in `src/main/osgi/`,
+and write the BND instructions there.
+
+For example, the Wisdom Hibernate Validation bundle has the following instructions:
+
+----
+Private-Package: org.wisdom.validation.hibernate;-split-package:=merge-first,  \
+    org.jboss.logging.*, \
+    com.fasterxml.classmate.*, \
+    org.hibernate.validator*, \
+    com.sun.el*, \
+    javax.el*
+Import-Package: javax.validation.*;version="[1.1.0,2.0.0)", \
+                !org.apache.log4j, \
+                org.jsoup*;resolution:=optional, \
+                javax.persistence*;resolution:=optional, \
+                org.jboss.logmanager*;resolution:=optional, \
+                *
+Export-Package: org.hibernate.validator.constraints*
+----
+
+TIP: The `osgi.bnd` file can use Maven properties.
+
+When used, the `osgi.bnd` file is merged with the default instructions used by Wisdom (`Import-Package`,
+`Export-Package` (based on the package name), `Private-Package`, and `Include-Resource`). In other words, every
+instructions specified in the `osgi.bnd` replaces default value provided by Wisdom for this instruction. For example,
+ if your `osgi.bnd` file contains `Export-Package: my.package.to.be.exported`, it won't compute the default exported
+ packages, but use your value (and only your value).
+
+You can completely disable the Wisdom defaults, by adding the following instruction in the `osgi.bnd` file:
+
+----
+-no-default: true
+----
+
+=== Embedding Maven dependencies inside the application package
+
+You can declare a set of (Maven) dependency to be packaged within the application bundle. The Wisdom Maven Plugin
+supports embedding of selected project dependencies inside the bundle by using the `Embed-Dependency` instruction:
+
+----
+Embed-Dependency: dependencies
+----
+
+where:
+
+----
+dependencies ::= clause ( ',' clause ) *
+clause ::= MATCH ( ';' attr '=' attribute | ';inline=' inline | ';transitive=' transitive)
+attr ::= 'scope' | 'type' | 'classifier' | 'optional'
+transitive ::= 'true' | 'false'
+inline ::= 'true' | 'false' | PATH ( '|' PATH ) *
+attribute ::= <value> ( '|' <value> ) *
+MATCH ::= <Maven Pattern Dependency Filter ([groupId]:[artifactId]:[type]:[version])>
+PATH ::= <Ant-style path expression>
+----
+
+The plugin uses the `Embed-Dependency` instruction to transform the project dependencies into `Include-Resource` and
+ `Bundle-ClassPath` clauses, which are then appended to the current set of instructions and passed onto BND.
+
+Let's see some examples:
+
+----
+# embed all compile and runtime scope dependencies
+Embed-Dependency: *;scope=compile|runtime
+
+# embed any dependencies with artifactId junit and scope runtime
+Embed-Dependency: junit;scope=runtime
+
+# embed all compile and runtime scope dependencies, except those with artifactIds in the given list
+Embed-Dependency: *;scope=compile|runtime;inline=false;exclude=:cli|:lang|:runtime|:tidy|:jsch
+
+# inline contents of selected folders from all dependencies
+Embed-Dependency: *;inline=images/**|icons/**
+----
+
+Normally the plugin only checks direct dependencies, but this can be changed to include the complete set of transitive
+dependencies with the following option:
+
+----
+Embed-Transitive: true
+----
+
+It can also be enabled using the `transitive=true` attribute.
+
+IMPORTANT: Be aware that Wisdom is using 1) a different syntax than the Maven-Bundle-Plugin to select the set of
+artifacts, 2) Inline artifacts by default
+
+=== Configuring the Java source and target
+
+By default, Wisdom compiles your code using Java 1.7. This convention was made to stick with the Maven convention.
+However you can override these settings by adding the following properties in your `pom.xml`:
+
+[source, xml]
+----
+<properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.testSource>1.8</maven.compiler.testSource>
+        <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
+</properties>
+----
+
+=== Adding instance configuration
+
+You can add `cfg` file into the `src/main/instances` directory to add them to the `wisdom/application` directory.
+`cfg` files let you configure iPOJO instances (instantiation, configuration and reconfiguration). This directory is
+_watched_ so changes are reflected immediately.
+
+The file are filtered, so can rely on Maven properties.
+
+The `cfg` file format is defined in the http://ow2-chameleon.github.io/core/snapshot/chameleon-directory-monitor.html#configuration_deployment[Configuration deployment section].
+
+These files are packaged in the distribution but not in the bundle. So, if an application relies on a component
+requiring a specific instance configuration, this configuration need to be copied. If the configuration is static,
+you should use the `@Configuration` support of
+http://felix.apache.org/documentation/subprojects/apache-felix-ipojo/apache-felix-ipojo-userguide/apache-felix-ipojo-instances.html#configuration[iPOJO].
+
+
+

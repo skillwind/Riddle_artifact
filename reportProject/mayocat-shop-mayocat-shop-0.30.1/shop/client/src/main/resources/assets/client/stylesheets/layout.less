@@ -1,0 +1,302 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+ /* Modal */
+
+.modal-header .btn-group {
+  float: right;
+  margin: 5px;
+}
+
+/* Header */
+
+header {
+  width: 239px;
+  height: 95px;
+  border-right: solid 1px @borderHeaderStrong;
+  padding: 15px 0px;
+  background-color: @backgroundHeader;
+  color: @headerFontColor;
+}
+
+header .logo {
+  background-image: url("@{logoImageUrl}");
+  background-repeat: no-repeat;
+  background-size: 67px auto;
+  height: 80px;
+  width: 72px;
+  cursor: pointer;
+  float: left;
+  margin: 0px 7px;
+}
+
+header a {
+  color: inherit !important;
+}
+
+header .brand, header p.host small {
+  width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+header p.host {
+  max-width: 50px;
+}
+
+header p.host small {
+  position: absolute;
+}
+
+header p.logout {
+  margin-top: 36px;
+}
+
+header .btn-group {
+  /* language switch */
+  float: right;
+  margin: 26px 10px;
+
+  .btn {
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .dropdown-menu {
+    min-width: 37px;
+    width: 37px;
+
+    li {
+      text-align: center;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+  }
+}
+
+/* Left sidebar (menu) */
+
+.sidebar-nav a, #list a {
+  color: @fontColor;
+}
+
+.sidebar-nav {
+  position: fixed;
+  width: 239px;
+  height: 100%;
+  float: left;
+  border-right: solid 1px;
+  background-color: @backgroundLight;
+  border-color: @borderStrong;
+}
+
+.sidebar-nav ul {
+  margin: 0px;
+  padding: 10px 0px 10px 0px;
+  list-style: none;
+  border-top: solid 1px #fff;
+  border-bottom: solid 1px @borderStrong;
+}
+
+.sidebar-nav ul:first-child {
+  border-top: none;
+}
+
+.sidebar-nav ul:last-child {
+  border-bottom: none;
+}
+
+.sidebar-nav ul li {
+  margin: 0px;
+  padding: 8px 0px 6px 15px;
+  width: 239px;
+  border-color: @backgroundLight;
+}
+
+.sidebar-nav > ul > li.active {
+  padding: 7px 0px 5px 15px;
+  border-top: solid 1px;
+  border-bottom: solid 1px;
+  border-color: @borderStrong;
+  background-color: @backgroundLighter;
+}
+
+.sidebar-nav ul.sub-menu {
+  padding: 5px 0px 5px 15px;
+}
+
+.sidebar-nav ul.sub-menu li {
+  padding: 2px 0px 2px 0px;
+}
+
+.sidebar-nav ul.sub-menu > li.active {
+  font-weight: bold;
+}
+
+/* List */
+
+#list {
+  width: 179px;
+  height: 100%;
+  float: left;
+  background-color: @backgroundLighter;
+  border-color: @borderStrong;
+}
+
+#list .header {
+  width: 179px;
+  height: 95px;
+  padding: 60px 0px 0px 15px;
+  border-left: solid 1px;
+  background-color: @backgroundHeader;
+  color: @headerFontColor;
+  border-color: @borderHeaderLight;
+}
+
+#list .scroll-wrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: -moz-calc(100% - 95px);
+  height: -webkit-calc(100% - 95px);
+  height: -ms-calc(100% - 95px);
+  height: calc(100% - 95px);
+}
+
+#list .collection {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+#list ul {
+  width: 177px;
+  margin-left: 2px;
+}
+
+#list li {
+  padding: 0px;
+  position: relative;
+  border-bottom: none;
+  border-right: 1px solid @borderStrong;
+}
+
+#list li.hasChildren li,
+#list li.active {
+  border-right: none;
+}
+
+#list ul li.hasChildren:last-child > .droptarget {
+  padding-bottom: 0;
+}
+
+#list ul li.hasChildren ul li:last-child .droptarget {
+  border-bottom: none;
+}
+
+#list .droptarget {
+  padding: 0px 0px 11px 0px;
+  border-bottom: solid 1px  @borderList;
+}
+
+#list ul li:first-child > .droptarget {
+  border-top: solid 1px  @borderList;
+}
+
+#list .droptarget:hover {
+  background-color: #FFF;
+  z-index: 100;
+}
+
+#list .droptarget.disable-hover {
+  background-color: transparent;
+  z-index: auto;
+
+  > div > .move-handle {
+    display: none;
+  }
+}
+
+#list .droptarget > div:first-child {
+  padding: 11px 0px 0px 7px;
+}
+
+.sub-list #list li.active {
+  background: white;
+  border-right: none;
+  width: 177px;
+}
+
+.sub-list #list li.active .droptarget {
+  border-right: none;
+}
+
+#list ul ul li .droptarget {
+  padding-left: 10px !important;
+  padding-bottom: 11px;
+}
+
+#list ul li.hasChildren > .droptarget {
+  padding-bottom: 0px;
+}
+
+#list ul li.hasChildren > div > div.listItem {
+  padding-bottom: 11px
+}
+
+#list ul li.hasChildren ul li .droptarget {
+  padding-left: 8px !important;
+}
+
+#list ul.list li {
+  text-indent: 10px !important;
+}
+
+#list ul li .uncategorized {
+  padding-top: 11px;
+}
+
+#list .move-handle {
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: 1px;
+  width: 39px;
+  height: 39px;
+  background-image: url(../images/icon-move.png);
+  background-color: #FFF;
+}
+
+#list li:hover > div > div > .move-handle {
+  display: block;
+}
+
+#list .uncategorized .listItem {
+  padding-left: 10px;
+}
+
+
+/* General Layout <o */
+
+#content {
+  float: left;
+  height: 100%;
+  margin: 0px 0px 0px 239px;
+  width: -moz-calc(100% - 240px);
+  width: -webkit-calc(100% - 240px);
+  width: -ms-calc(100% - 240px);
+  width: calc(100% - 240px);
+}
+
+#content > .sub-list {
+  float: left;
+  height: 100%;
+  position: fixed;
+}
+

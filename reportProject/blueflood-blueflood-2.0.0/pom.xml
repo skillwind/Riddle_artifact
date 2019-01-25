@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright 2013 Rackspace
+  ~
+  ~    Licensed under the Apache License, Version 2.0 (the "License");
+  ~    you may not use this file except in compliance with the License.
+  ~    You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~    Unless required by applicable law or agreed to in writing, software
+  ~    distributed under the License is distributed on an "AS IS" BASIS,
+  ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~    See the License for the specific language governing permissions and
+  ~    limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.rackspacecloud</groupId>
+  <artifactId>blueflood</artifactId>
+  <name>Blueflood</name>
+  <packaging>pom</packaging>
+  <version>2.0.0-SNAPSHOT</version>
+  <modules>
+    <module>blueflood-core</module>
+    <module>blueflood-elasticsearch</module>
+    <module>blueflood-http</module>
+    <module>blueflood-cloudfiles</module>
+    <module>blueflood-rollupTools</module>
+  </modules>
+
+  <description>
+    Blueflood is a multi-tenant distributed metric processing system.
+    Blueflood is capable of ingesting, rolling up and serving metrics at a massive scale.
+  </description>
+  <url>http://blueflood.io</url>
+
+  <properties>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+    <!-- Used to locate the profile specific configuration file. -->
+    <build.profile.id>dev</build.profile.id>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cassandra.plugin.version>2.0.0-1</cassandra.plugin.version>
+    <cassandra.listenAddress>127.0.0.1</cassandra.listenAddress>
+    <cassandra.skip>true</cassandra.skip>
+    <skip.integration.tests>false</skip.integration.tests>
+    <skip.unit.tests>false</skip.unit.tests>
+    <slf4j.version>1.7.6</slf4j.version>
+    <jodatime.version>2.9</jodatime.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.netflix.astyanax</groupId>
+        <artifactId>astyanax-core</artifactId>
+        <version>1.56.34</version>
+      </dependency>
+      <dependency>
+        <groupId>com.datastax.cassandra</groupId>
+        <artifactId>cassandra-driver-core</artifactId>
+        <version>3.0.3</version>
+      </dependency>
+      <dependency>
+        <groupId>pl.pragmatists</groupId>
+        <artifactId>JUnitParams</artifactId>
+        <version>1.0.4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-all</artifactId>
+        <version>4.0.40.Final</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.10</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cassandra-maven-plugin</artifactId>
+          <version>${cassandra.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.19.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>2.19.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.13</version>
+      </plugin>
+      <!-- compile -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+        <version>3.1</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <attach>true</attach>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <configuration>
+          <quiet>true</quiet>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- packages up the test files. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Used for integration tests -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>reserve-network-port</id>
+            <goals>
+              <goal>reserve-network-port</goal>
+            </goals>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <portNames>
+                <portName>cassandra.rpcPort</portName>
+                <portName>cassandra.nativeTransportPort</portName>
+                <portName>cassandra.jmxPort</portName>
+                <portName>cassandra.storagePort</portName>
+                <portName>cassandra.stopPort</portName>
+              </portNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.2.201409121644</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>prepare-it-agent</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+            <configuration>
+              <propertyName>jacoco.agent.it.argLine</propertyName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.1.0</version>
+        <configuration>
+          <jacocoReports>
+            <jacocoReport>blueflood-core/target/site/jacoco/jacoco.xml</jacocoReport>
+            <jacocoReport>blueflood-core/target/site/jacoco-it/jacoco.xml</jacocoReport>
+            <jacocoReport>blueflood-http/target/site/jacoco/jacoco.xml</jacocoReport>
+            <jacocoReport>blueflood-http/target/site/jacoco-it/jacoco.xml</jacocoReport>
+          </jacocoReports>
+        </configuration>
+      </plugin>
+
+      <!-- Spin up Cassandra -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cassandra-maven-plugin</artifactId>
+        <version>${cassandra.plugin.version}</version>
+        <configuration>
+          <!--There are issues when running tests inside vmware fusion on a filesystem mounted from the host machine-->
+          <cassandraDir>/tmp/bf-cassandra-${cassandra.plugin.version}/</cassandraDir>
+          <loadFailureIgnore>false</loadFailureIgnore>
+          <startNativeTransport>true</startNativeTransport>
+        </configuration>
+        <executions>
+          <execution>
+            <id>delete-cassandra</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>delete</goal>
+            </goals>
+          </execution>
+          <execution>
+            <goals>
+              <goal>start</goal>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  <profiles>
+    <profile>
+      <id>dev</id>
+    </profile>
+    <profile>
+      <id>skip-integration-tests</id>
+      <properties>
+        <skip.integration.tests>true</skip.integration.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>skip-unit-tests</id>
+      <properties>
+        <skip.unit.tests>true</skip.unit.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>all-modules</id>
+      <modules>
+        <module>blueflood-all</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>logstash-support</id>
+      <modules>
+        <module>contrib/logstash-support</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>cassandra-1.1</id>
+      <properties>
+        <cassandra.plugin.version>1.1.0-1</cassandra.plugin.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>cassandra-1.2</id>
+      <properties>
+        <cassandra.plugin.version>1.2.1-1</cassandra.plugin.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>cassandra-2.0</id>
+      <properties>
+        <cassandra.plugin.version>2.0.0-1</cassandra.plugin.version>
+      </properties>
+    </profile>
+  </profiles>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+  <scm>
+    <connection>scm:git@github.com:rackerlabs/blueflood.git</connection>
+    <developerConnection>scm:git:git@github.com:rackerlabs/blueflood.git</developerConnection>
+    <url>git@github.com:rackerlabs/blueflood.git</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>fourk</id>
+      <name>James Burkhart</name>
+      <email>j+github@hip.st</email>
+    </developer>
+    <developer>
+      <id>wolfdancer</id>
+      <name>Shane Duan</name>
+      <email>shane.duan@rackspace.com</email>
+    </developer>
+    <developer>
+      <id>gdusbabek</id>
+      <name>Gary Dusbabek</name>
+      <email>gdusbabek@gmail.com</email>
+    </developer>
+    <developer>
+      <id>chinmay-gupte</id>
+      <name>Chinmay Gupte</name>
+      <email>chinmay.gupte@rackspace.com</email>
+    </developer>
+    <developer>
+      <id>lakshmi-kannan</id>
+      <name>Lakshmi Kannan</name>
+      <email>lakshmi.kannan@rackspace.com</email>
+    </developer>
+    <developer>
+      <id>jeeyoungk</id>
+      <name>Jeeyoung Kim</name>
+      <email>jeeyoungk@gmail.com</email>
+    </developer>
+    <developer>
+      <id>dlobue</id>
+      <name>Dominic LoBue</name>
+      <email>dominic.lobue@rackspace.com</email>
+    </developer>
+    <developer>
+      <id>stackedsax</id>
+      <name>Alex Scammon</name>
+      <email>alexander.scammon@rackspace.com</email>
+    </developer>
+    <developer>
+      <id>tilogaat</id>
+      <name>Tilottama Gaat</name>
+      <email>tilottama.gaat@rackspace.com</email>
+    </developer>
+    <developer>
+        <id>georgejahad</id>
+        <name>George Jahad</name>
+        <email>george.jahad@rackspace.com</email>
+    </developer>
+  </developers>
+</project>

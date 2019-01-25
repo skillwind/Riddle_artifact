@@ -1,0 +1,8 @@
+TARGET_CLASS,criterion,Coverage,Total_Goals,Covered_Goals
+org.stjs.command.line.ProjectCommandLine,MTHD_PROB_RISK,0.0,1,0
+org.stjs.command.line.CommandLine,MTHD_PROB_RISK,0.0,1,1
+org.stjs.command.line.CommandLine,MTHD_PROB_RISK,0.0,1,1
+org.stjs.command.line.CommandLine,MTHD_PROB_RISK,0.0,1,1
+org.stjs.command.line.CommandLine,MTHD_PROB_RISK,0.0,1,0
+org.stjs.command.line.CommandLine,MTHD_PROB_RISK,0.0,1,1
+org.stjs.command.line.CommandLine,MTHD_PROB_RISK,0.0,1,1

@@ -1,0 +1,2 @@
+org.mayocat.store.rdbms.dbi.DBIEntityStore
+org.mayocat.store.rdbms.dbi.DBIEntityListStore

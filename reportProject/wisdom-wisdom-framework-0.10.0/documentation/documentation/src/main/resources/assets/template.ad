@@ -1,0 +1,381 @@
+== Using Templates
+
+=== Template as a Service
+
+Just to makes you understand how the template system works, you should read these small paragraphs.
+
+Wisdom allows the integration of any template engine. By default, http://www.thymeleaf.org/[Thymeleaf] is provided.
+ Each template is exposed as a _service_ and can be injected into a controller using the `@View`
+ annotation. This pattern is used regardless of the template engine you use.
+
+The `View` annotation is looking for a template with the specified name. It is equivalent to a regular `@Requires`
+with a filter.
+
+=== The Thymeleaf Template Engine
+
+http://www.thymeleaf.org/[Thymeleaf] is an XML / XHTML / HTML5 template engine (extensible to other formats) that
+can work both in web and non-web environments. It is really well suited for serving XHTML/HTML5 at the view layer of
+web applications, but it can also process any XML file even in offline environments.
+
+The main goal of Thymeleaf is to provide an elegant and well-formed way of creating templates. It allows you to create
+powerful natural templates, that can be correctly displayed by browsers and therefore work also as static prototypes.
+ One of the main interests of Thymeleaf is a smooth collaboration with a Web Designer. By using
+ specific attributes on
+ HTML elements, you never interfere with the work of the web designers. They create the HTML page with whatever
+ structure, and CSS tricks, and you just identify the parts where you inject the data.
+
+It looks like this. As you can see, it's a pretty straightforward syntax supporting all the features you expect from a
+ template engine: variables, internationalization, iterations, layouts, fragments, object navigation, and much more.
+
+[source,xml,indent=0]
+----
+<table>
+  <thead>
+    <tr>
+      <th th:text="#{msgs.headers.name}">Name</th>
+      <th th:text="#{msgs.headers.price}">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="prod : ${allProducts}">
+      <td th:text="${prod.name}">Oranges</td>
+      <td th:text="${#numbers.formatDecimal(prod.price,1,2)}">0.99</td>
+    </tr>
+  </tbody>
+</table>
+----
+
+The complete documentation of Thymeleaf is available http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html[here].
+
+==== My First Template
+
+Thymeleaf templates are HTML files with the `.thl.html` extension, for example: `mytemplate.thl.html`. The
+"mytemplate" is referred as the template name. Templates can be placed in:
+
+* `src/main/resources/templates` and are embedded in the application's Jar.
+* `src/main/templates` and are in the distribution but not in the application's Jar file.
+
+
+Whether or not your application is intended to be reused in several 'bigger' application determines the place of your
+ template files.
+
+Let's look at the following template, named `welcome.thl.html`:
+
+[source,xml,indent=0]
+----
+include::{resourcedir}/templates/snippets/doc/welcome.thl.html[tags=content]
+----
+
+The `th:text` attribute instructs the template engine to replace the content of the element by the `welcome`
+value. This value is given as parameter to the template engine.
+
+So now in your controller, use the `@View` annotation to inject the template:
+
+[source,java,indent=0]
+----
+include::{sourcedir}/controllers/templates/WelcomeController.java[tags=controller]
+----
+<1> Use the `@View` annotation and indicate the template name
+<2> The injected field must use the `Template` type
+<3> Use the `render(template, ...)` methods to render the template
+
+You can render the template using the `render` methods:
+
+* `render(Template template)` asks the template engine to render the template without input variables
+* `render(Template template, Map<String, Object> params)` inserts the given parameters to the template
+* `render(Template template, Object... params)` proposes an easier way to pass parameters. However, one parameter
+out of two must be a string (the parameter name), while the following is the value:
+
+[source, java]
+----
+return ok(render(template, "welcome", "hello", "age", 1, "colors", new String[] {"red", "blue"}));
+----
+
+The `render` method is wrapped within an `ok` method indicating the type of response. Obviously,
+you can use any other  type of result.
+
+Some values are automatically given to the template engine:
+
+* the parameters of the request
+* the values stored in the session
+* the value stored in the flash scope
+
+==== Some Thymeleaf constructions
+
+Now we have seen how template can be used, let's see some general construction patterns we use in templates:
+
+**Variable:**
+
+[source,xml,indent=0]
+----
+<p th:text="${variable}">this will be replace by the variable</p>
+<p th:utext="${variable}">this will be replace by the variable (unescaped so won't remove the
+contained HTML elements)
+</p>
+----
+
+**Internationalized variable:**
+
+[source,xml,indent=0]
+----
+ <p th:text="#{variable}">this will be replaced by the variable using the request locale</p>
+----
+
+WARNING: Internationalized values are directly retrieved from the internationalization service
+from Wisdom.
+
+**Iteration:**
+
+You can iterate on collections, arrays, maps...
+
+[source,xml,indent=0]
+----
+<!-- Iterate over a list of products -->
+<tr th:each="prod : ${prods}">
+  <td th:text="${prod.name}">Onions</td>
+  <td th:text="${prod.price}">2.41</td>
+  <td th:text="${prod.inStock}? #{true} : #{false}">yes</td>
+</tr>
+----
+
+**Conditionals:**
+
+[source,xml,indent=0]
+----
+<td th:text="${prod.inStock}? 'true' : 'false'">
+  true or false according to the prod.isStock value
+</td>
+----
+
+[source,xml,indent=0]
+----
+<a href="#" th:if="${not #lists.isEmpty(prod.comments)}">display this link comments if not empty</a>
+----
+
+**Static Methods:**
+
+[source,xml,indent=0]
+----
+    <p th:utext="${@controllers.template.Utils@add(1, 2)}"></p>
+    <p th:utext="${@org.ietf.jgss.GSSManager@getInstance().toString()}"></p>
+----
+
+TIP: Check the http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html[Thymeleaf documentation] to find more.
+
+TIP: Thymeleaf uses the OGNL expression language. Refer to
+http://commons.apache.org/proper/commons-ognl/language-guide.html[the OGNL language guide].
+
+==== Fragments
+
+Templates are generally used to create layouts. Thymeleaf allows creation of _fragments_, and to
+include them in the
+_main_ template.
+
+Fragments are an identified part of a template. For example, the following snippet defines two
+fragments: `my-content`
+and `sub-content`.
+
+[source,xml,indent=0]
+----
+include::{resourcedir}/templates/snippets/doc/content.thl.html[tags=content]
+----
+
+Fragments can be included either using:
+
+* `th:include`: include the fragment 'under' the element using the directive
+* `th:replace`: replace the element using this directive with the fragment content
+
+The value of theses directive is formed by `name_of_the_template_defining_the_fragments :: fragment_name`. For
+example, if the previous fragment are defined in `content.thl.html`, including them would look like:
+
+[source,xml,indent=0]
+----
+include::{resourcedir}/templates/snippets/doc/page.thl.html[tags=content]
+----
+
+TIPS: fragments can use any variable given to the template engine.
+
+==== Layout
+
+Thymeleaf also supports _layout_. This feature is useful to give to your application a common shape. To use this
+feature, create a first template (called `master`) that is the _layout_, so contains the basic structure of your pages
+(headers, footers...):
+
+[source,xml,indent=0]
+----
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" href="/assets/images/owl-small.png"/>
+
+    <script src="/libs/jquery.min.js"></script>
+    <script src="/libs/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/libs/css/bootstrap.css" media="screen"/>
+    <link rel="stylesheet" href="/libs/bootswatch-yeti/css/bootstrap.css" media="screen"/>
+
+    <title layout:title-pattern="$DECORATOR_TITLE :: $CONTENT_TITLE">Wisdom Monitor</title>
+</head>
+<body>
+<div th:replace="tiles :: topbar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="tiles :: sidebar"></div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" layout:fragment="content">
+            This is the content.
+        </div>
+    </div>
+</div>
+</body>
+</html>
+----
+
+This template is a regular Thymeleaf template (that can use fragment such as `titles::topbar`), but notice the
+`layout:fragment="content"` indicating that the template using this layout will provide the actual "content" of this
+element.
+
+Then, create the templates inheriting from the layout:
+
+[source,xml,indent=0]
+----
+<html layout:decorator="master">
+<head lang="en">
+
+    <title>iPOJO</title>
+
+    <link rel="stylesheet" href="/assets/table.css"/>
+    <link href="/assets/dashboard.css" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content">
+<!-- the actual content goes there -->
+<h1 class="page-header">iPOJO</h1>
+
+<div class="container">
+    <!-- .... -->
+</div>
+----
+
+In the `html` element, notice the `layout:decorator` indicating the layout template (here it's _master_). Then, the
+_content_ fragment is indicated using `layout:fragment="content"` in the `div` element that will contain the content.
+
+More details about the thymeleaf layout system are available here: https://github.com/ultraq/thymeleaf-layout-dialect.
+
+==== Using the router from the template
+
+A template can use a special object named `#routes` to retrieve the url of action methods. In the following snippet,
+the `action` attribute is assigned to the url of the `upload` method of the current controller (the controller having
+ requested the template rendering).
+
+[source,xml,indent=0]
+----
+th:attr="action=${#routes.route('upload')}"
+----
+
+You can also ask for the url of an action method receiving parameters:
+
+[source,xml,indent=0]
+----
+th:attr="action=${#routes.route('upload', 'param', 'value', 'param2', 'value2')}"
+----
+
+Finally, you can target methods from other controllers with:
+
+[source,xml,indent=0]
+----
+th:attr="action=${#routes
+    .route(`org.acme.controller.MyOtherController`, 'upload', 'param', 'value')}"
+----
+
+If the route cannot be found, the template rendering fails.
+
+The `routes` object is also able to compute the URL of assets:
+
+[source,xml,indent=0]
+----
+<link th:href="${#routes.asset('css/bootstrap.min.css')}" rel="stylesheet"/>
+<link th:href="${#routes.asset('/css/bootstrap-theme.min.css')}" rel="stylesheet"/>
+<script th:src="${#routes.asset('/jquery.js')}"></script>
+<script th:src="${#routes.asset('js/bootstrap.min.js')}"></script>
+----
+
+It locates the assets in the _assets_ directories and in _webjars_. With such a functionality, you
+don't need to write the
+complete urls. In addition, if an asset cannot be located, the template rendering fails.
+
+
+==== Using the HTTP Context, session, flash and request
+
+Like you can access the Wisdom router from the template, you can also inject the following objects:
+
+* the current HTTP context (using the `http` variable)
+* the session
+* the flash scope
+* the request object
+
+[source,xml,indent=0]
+----
+<div>
+    <ul>
+        <li><span>From Session</span> = <span th:text="${#session.get('value')}">VALUE</span></li>
+        <li><span>From Flash</span> = <span th:text="${#flash.get('value')}">VALUE</span></li>
+        <li><span>From Request</span> = <span th:text="${#request.data().get('value')}">VALUE</span></li>
+    </ul>
+</div>
+----
+
+==== Extending Thymeleaf
+
+The Thymeleaf Template language can be extended using _dialects_. Wisdom tracks these dialects from the service
+registry and enhanced the template facilities dynamically. So to extend the template language, just implement your
+own dialect such as:
+
+[source,java,indent=0]
+----
+/**
+ * An example of custom dialect.
+ */
+@Service
+public class MyDialect extends AbstractDialect {
+
+    @Override
+    public String getPrefix() {
+        return "my";
+    }
+
+    @Override
+    public Set<IProcessor> getProcessors() {
+        return ImmutableSet.<IProcessor>of(new SayToAttrProcessor());
+    }
+
+
+    private class SayToAttrProcessor
+            extends AbstractTextChildModifierAttrProcessor {
+
+
+        public SayToAttrProcessor() {
+            super("sayto");
+        }
+
+
+        public int getPrecedence() {
+            return 10000;
+        }
+
+        @Override
+        protected String getText(final Arguments arguments, final Element element,
+                                 final String attributeName) {
+            return "Hello, "  + element.getAttributeValue(attributeName) + "!";
+        }
+    }
+}
+----
+
+To go further, check the http://www.thymeleaf.org/doc/tutorials/2.1/extendingthymeleaf.html[Thymeleaf extension page].
+
+
+
+
+
+

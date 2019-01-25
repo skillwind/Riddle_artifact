@@ -1,0 +1,7 @@
+  locales:
+    main:
+      default: en
+      configurable: false
+    others:
+      default: [de, fr_FR]
+      configurable: false

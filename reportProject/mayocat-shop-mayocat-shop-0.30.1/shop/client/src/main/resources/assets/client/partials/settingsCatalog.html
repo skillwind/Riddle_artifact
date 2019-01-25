@@ -1,0 +1,118 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div id="settings">
+    <div class="span8">
+        <!-- header -->
+        <div class="page-header">
+            <h1 class="">{{'settings.title.catalog' | translate}}</h1>
+        </div>
+
+        <form name="shopForm">
+            <fieldset>
+                <legend>{{'settings.title.currencies' | translate}}</legend>
+
+                <div class="block">
+
+                    <!-- Default currency -->
+                    <div ng-show="isVisible('catalog.currencies.main')"
+                         ng-class="{default: isDefaultValue('catalog.currencies.main')}">
+                        <p><label>{{'settings.misc.defaultCurrency' | translate}}</label></p>
+
+                            <currency-picker model="settings.catalog.currencies.main.value"
+                                             disabled="!isConfigurable('catalog.currencies.main')"
+                                             defaultValue="settings.catalog.currencies.main.default"/>
+                    </div>
+
+                    <!-- Other currencies -->
+                    <div ng-show="isVisible('catalog.currencies.others')"
+                         ng-class="{default: isDefaultValue('catalog.currencies.others')}">
+                        <p><label>{{'settings.misc.otherCurrencies' | translate}}</label></p>
+
+                            <currency-list-picker model="settings.catalog.currencies.others.value"
+                                                  disabled="!isConfigurable('catalog.currencies.others')"
+                                                  defaultValue="settings.catalog.currencies.other.default"/>
+                        <input type="hidden" ng-model="settings.catalog.currencies.others.value"/>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>{{'product.title.products' | translate}}</legend>
+
+                <div class="block">
+
+                    <!-- Collections -->
+                    <div ng-show="isVisible('catalog.products.collections')"
+                         ng-class="{default: isDefaultValue('catalog.products.collections')}">
+
+                        <label class="checkbox">
+                            {{'settings.misc.collectionsManagement' | translate}}
+                            <input type="checkbox"
+                                   id="collectionsEnabled"
+                                   ng-model="settings.catalog.products.collections.value"/>
+                        </label>
+                    </div>
+
+                    <!-- Stock -->
+                    <div ng-show="isVisible('catalog.products.stock')"
+                         ng-class="{default: isDefaultValue('catalog.products.stock')}">
+
+                        <label class="checkbox">
+                            {{'settings.misc.stockManagement' | translate}}
+                            <input type="checkbox"
+                                   id="stockEnabled"
+                                   ng-model="settings.catalog.products.stock.value"/>
+                        </label>
+                    </div>
+
+                    <!-- Weight -->
+                    <div ng-show="isVisible('catalog.products.weight')"
+                         ng-class="{default: isDefaultValue('catalog.products.weight')}">
+
+                        <label class="checkbox">
+                            {{'settings.misc.weightManagement' | translate}}
+                            <input type="checkbox"
+                                   id="weightEnabled"
+                                   ng-model="settings.catalog.products.weight.value"/>
+                        </label>
+                    </div>
+
+                    <div ng-show="isVisible('catalog.products.weightUnit')"
+                         ng-class="{default: isDefaultValue('catalog.products.weightUnit')}">
+
+
+                        <dd>
+                            <label class="checkbox">
+                                {{'settings.misc.weightUnit' | translate}}
+                                <select ng-disabled="!settings.catalog.products.weight.value"
+                                        ng-model="settings.catalog.products.weightUnit.value"
+                                        ng-options="value.unit as (value.label + ' (' + value.unit + ')') for value in [{'unit':'kg','label':'Kilogram'}, {'unit':'g','label':'Gram'}, {'unit':'oz','label':'Ounce'}, {'unit':'lb','label':'Pound'} ]">
+                                </select>
+                            </label>
+                        </dd>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div>
+        <div class="buttons hasLoading">
+            <button ng-click="updateSettings()"
+                    class="btn btn-large btn-primary">
+                {{'entity.action.update' | translate}}
+            </button>
+            <span ng-class="{'loading': isSaving}"></span>
+        </div>
+    </div>
+</div>

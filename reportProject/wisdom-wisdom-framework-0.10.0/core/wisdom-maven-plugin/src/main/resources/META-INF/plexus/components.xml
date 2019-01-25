@@ -1,0 +1,92 @@
+<!--
+  #%L
+  Wisdom-Framework
+  %%
+  Copyright (C) 2013 - 2014 Wisdom Framework
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<component-set>
+    <components>
+        <component>
+            <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+            <role-hint>wisdom</role-hint>
+            <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+            <configuration>
+                <lifecycles>
+                    <lifecycle>
+                        <id>default</id>
+                        <phases>
+                            <initialize>
+                                org.wisdom-framework:wisdom-maven-plugin:initialize
+                            </initialize>
+                            <process-resources>
+                                org.wisdom-framework:wisdom-maven-plugin:copy-configuration,
+                                org.wisdom-framework:wisdom-maven-plugin:copy-resources,
+                                org.wisdom-framework:wisdom-maven-plugin:copy-assets,
+                                org.wisdom-framework:wisdom-maven-plugin:copy-templates,
+
+                                org.apache.maven.plugins:maven-resources-plugin:resources
+                            </process-resources>
+                            <compile>
+                                org.wisdom-framework:wisdom-maven-plugin:compile-coffeescript,
+                                org.wisdom-framework:wisdom-maven-plugin:compile-typescript,
+                                org.wisdom-framework:wisdom-maven-plugin:compile-less,
+                                org.wisdom-framework:wisdom-maven-plugin:optimize-images,
+                                org.wisdom-framework:wisdom-maven-plugin:compile,
+                            </compile>
+                            <process-classes>
+                                org.wisdom-framework:wisdom-maven-plugin:compile-javascript,
+                                org.wisdom-framework:wisdom-maven-plugin:minify-css
+                            </process-classes>
+                            <process-test-resources>
+                                org.apache.maven.plugins:maven-resources-plugin:testResources
+                            </process-test-resources>
+                            <test-compile>
+                                org.wisdom-framework:wisdom-maven-plugin:testCompile
+                            </test-compile>
+                            <test>
+                                org.wisdom-framework:wisdom-maven-plugin:test,
+                                org.wisdom-framework:wisdom-maven-plugin:test-javascript
+                            </test>
+                            <package>
+                                org.wisdom-framework:wisdom-maven-plugin:package,
+                                org.wisdom-framework:wisdom-maven-plugin:package-webjar,
+                            </package>
+                            <install>
+                                org.apache.maven.plugins:maven-install-plugin:install
+                            </install>
+                            <deploy>
+                                org.apache.maven.plugins:maven-deploy-plugin:deploy
+                            </deploy>
+                        </phases>
+                    </lifecycle>
+                </lifecycles>
+            </configuration>
+        </component>
+        <component>
+            <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+            <role-hint>wisdom</role-hint>
+            <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+            <configuration>
+                <type>wisdom</type>
+                <includesDependencies>false</includesDependencies>
+                <language>java</language>
+                <extension>jar</extension>
+                <addedToClasspath>true</addedToClasspath>
+                <packaging>wisdom</packaging>
+            </configuration>
+        </component>
+    </components>
+</component-set>

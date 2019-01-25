@@ -1,0 +1,440 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+#home {
+  padding: 50px 0px;
+}
+
+#home .hero-unit {
+  margin-right: 10px;
+  background: #f5f5f5;
+  font-size: 16px;
+  padding: 30px;
+
+}
+
+#catalog ul.list {
+  margin-left: 0;
+  margin-top: 25px;
+}
+
+#catalog ul li {
+  color: white;
+  border-top: 1px solid #DDDDDD;
+  line-height: 26px;
+  padding: 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+#catalog ul li:hover {
+  background-color: #F5F5F5;
+}
+
+#catalog ul li div {
+  color: #333;
+}
+
+#catalog ul li div.row {
+  margin-left: 0;
+}
+
+#settings {
+  margin-bottom: 20px;
+
+  &:after {
+    display: block;
+    content: '';
+    clear: both;
+  }
+}
+
+.thumbnails {
+  margin-left: 0;
+}
+
+.entity ul.thumbnails > li:first-child {
+  margin-left: 0;
+}
+
+.entity ul.thumbnails > li {
+  margin-left: 0px;
+  margin-right: 10px;
+  max-width: 160px; /* 150 + 10 */
+  margin-bottom: 10px;
+}
+
+/* Products */
+
+ul.variants li {
+  position: relative;
+}
+
+ul.variants li.variant .title {
+  font-size: 14px;
+}
+
+ul.variants li:last-child {
+  margin-bottom: 10px;
+}
+
+ul.variants li .visible-when-hover {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+ul.variants li small {
+  color: @fontLightColor;
+}
+
+ul.variants li small > span:after {
+  content: " \2013 ";
+}
+
+ul.variants li small > span:last-child:after {
+  content: '';
+}
+
+/* Addons */
+
+addon-string {
+  display: block;
+}
+
+/* Orders */
+
+.orders ul.stats li {
+  margin-bottom: 10px;
+}
+
+.table-hover tr {
+  cursor: pointer;
+}
+
+.order .waiting_for_paiement, .order .paid {
+  font-weight: bold;
+  background-color: #BBB
+}
+
+.order .prepared {
+  font-weight: bold;
+  background-color: #EEE
+}
+
+.order .shipped {
+}
+
+table.orders tr.paid td div.amount,
+table.orders tr.paid td div.date,
+table.orders tr.paid td.status {
+  font-weight: bolder;
+}
+
+
+/* Order */
+#main .order .block {
+  border: none !important;
+  padding-left: 0px !important;
+}
+
+#main .order .block:hover {
+  border: none !important;
+  padding-left: 0px !important;
+}
+
+.order tfoot {
+  font-weight: bold;
+  border-top: 3px double #333;
+  border-bottom: 1px solid #333;
+}
+
+.order tr.itemsTotal {
+  font-weight: bold;
+  border-top: 1px double #333;
+  border-bottom: 1px solid #333;
+}
+
+/* destination-picker */
+
+destination-picker ul {
+  margin-left: 20px;
+}
+
+destination-picker input {
+  float: left;
+  margin-top: -6px !important;
+  margin-left: 10px !important;
+}
+
+destination-picker p {
+  text-indent: 10px;
+  position:relative;
+}
+
+destination-picker span.arrow:after {
+  content: "\00A0";
+  min-width: 10px;
+  display: inline-block;
+  float:left;
+}
+
+destination-picker span.arrow.closed,
+destination-picker span.arrow.open {
+  float:left;
+  cursor:pointer;
+}
+
+destination-picker span.arrow.closed:after {
+  content: "\25B8";
+}
+
+destination-picker span.arrow.open:after {
+  right:0;
+}
+
+/* Tri-state checkbox */
+
+span.tristate.checkbox {
+  display:inline;
+  background: url(../../common/images/checkbox-unchecked.png) no-repeat;
+  width: 20px;
+  height: 20px;
+  padding-left: 12px;
+  margin-left: 13px;
+
+  &.checked {
+    background: url(../../common/images/checkbox-checked.png) no-repeat;
+  }
+
+  &.indeterminate {
+    background: url(../../common/images/checkbox-indeterminate.png) no-repeat;
+  }
+}
+
+/* Shipping location-picker */
+
+destination-picker .checked .checkbox {
+  background: url(../../common/images/checkbox-checked.png) no-repeat !important;
+}
+
+destination-picker p.destination {
+  display: inline-block;
+}
+
+/* List picker */
+
+list-picker select {
+  margin-top: 10px;
+}
+
+/* Entities localization */
+
+.locales-wrapper {
+  position: relative;
+  width: 100%;
+
+  &.locales-active {
+    z-index: 30;
+  }
+
+  .caret {
+    margin-left: 5px;
+  }
+}
+
+.locales-wrapper:not(.textarea) div[ng-transclude] {
+  display: inline-block;
+  width: 90%; // Guesswork fallback when there is no calc
+  width: -webkit-calc(~"100% - 54px");
+  width: calc(~"100% - 54px");
+}
+
+.locales-wrapper.textarea .locales-switch {
+  position: absolute;
+  top: -21px;
+  right: 0;
+}
+
+.locales-wrapper {
+  .btn-group, .open, .btn {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  .btn, .dropdown-menu {
+    border: 1px solid;
+    background: #eee !important;
+  }
+
+  .dropdown-menu {
+    top: -webkit-calc(~"100% - 2px");
+    top: calc(~"100% - 2px");
+    padding: 10px 0 0 0;
+    min-width: 37px;
+    width: 100% !important;
+    border-top: none;
+
+    -webkit-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    overflow: hidden;
+
+    li {
+      padding: 0 0 4px 9px;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #fbfbfb;
+      }
+    }
+  }
+}
+
+/* Entities localization as input add-ons */
+
+.input-append, .input-prepend {
+
+  .add-on.locales-switch {
+    position: relative;
+    padding-left: 0;
+    padding-right: 0;
+    border: 1px solid #ababab;
+    z-index: 20;
+
+    &:before {
+      content: " ";
+      position: absolute;
+      top: 0; bottom: 0;
+      border: none;
+      border-left: 1px solid #ddd;
+      z-index: 20;
+    }
+
+    .btn-group, .open, .btn {
+      border: none;
+    }
+
+    .btn-group {
+      padding: 0 5px;
+
+      .btn {
+        padding: 0 6px;
+      }
+    }
+
+    .dropdown-menu {
+      border-color: #ababab;
+      z-index: 10;
+    }
+  }
+
+}
+
+.input-prepend.locales-wrapper {
+  input,
+  select,
+  .uneditable-input {
+    border-left: none !important;
+  }
+
+  .add-on {
+    border-right: none;
+
+    &:before {
+      right: 0;
+    }
+  }
+}
+
+.input-append.locales-wrapper {
+  input,
+  select,
+  .uneditable-input {
+    border-right: none !important;
+  }
+
+  .add-on {
+    border-left: none;
+
+    &:before {
+      left: 0;
+    }
+  }
+
+  .dropdown-menu {
+    left: 1px;
+  }
+}
+
+/* Entities localization as textarea add-ons */
+
+.locales-wrapper.textarea:not([ck-editor]) {
+  textarea {
+    -webkit-border-radius: 5px 0 5px 5px;
+    border-radius: 5px 0 5px 5px;
+  }
+
+  .btn-group {
+    margin-top: -8px;
+
+    .btn {
+      border-color: #b0b0b0;
+      border-bottom: none;
+
+      -webkit-border-radius: 5px 5px 0 0;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .dropdown-menu {
+      left: 0px;
+      border-color: #ababab;
+      padding-top: 1px;
+
+      li {
+        padding: 2px 0 3px 12px;
+      }
+    }
+  }
+}
+
+/* Entities localization for ckeditor */
+
+.locales-wrapper[ck-editor] .btn-group {
+  position: relative;
+  top: 28px; right: 12px;
+  z-index: 10;
+
+  .btn, .dropdown-menu {
+    border-color: #959595;
+  }
+
+  .btn {
+    position: relative;
+    padding-top: 3px;
+    height: 28px;
+
+    -webkit-border-radius: 3px !important;
+    border-radius: 3px !important;
+
+    z-index: 20;
+  }
+
+  .dropdown-menu {
+    top: -webkit-calc(~"100% - 6px");
+    top: calc(~"100% - 6px");
+    left: 0;
+    padding-top: 3px;
+
+    li {
+      padding: 2px 0 3px 12px;
+    }
+  }
+}

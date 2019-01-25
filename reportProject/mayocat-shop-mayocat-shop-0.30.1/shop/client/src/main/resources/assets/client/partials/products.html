@@ -1,0 +1,35 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<div ng-controller="CatalogController">
+    <h1 class="big">{{'product.title.catalog' | translate}}</h1>
+
+    <div class="intro">
+        <h2>{{'product.title.products' | translate}}</h2>
+        <p>
+            {{'product.explanation.product' | translate}}
+        </p>
+        <div class="buttons">
+            <a ng-click="setRoute('products/_new')" class="btn btn-primary btn-large">{{'product.action.addProduct' | translate}}</a>
+        </div>
+    </div>
+
+    <div class="intro" ng-show="hasCollections">
+        <h2>{{'product.title.collections' | translate}}</h2>
+        <p>
+            {{'product.explanation.collection' | translate}}
+        </p>
+        <div class="buttons">
+            <!--
+            <a href="#/collections/">Manage collections</a>
+            -->
+            <a ng-click="setRoute('collections/_new')" class="btn btn-primary btn-large">{{'product.action.addCollection' | translate}}</a>
+        </div>
+    </div>
+</div>

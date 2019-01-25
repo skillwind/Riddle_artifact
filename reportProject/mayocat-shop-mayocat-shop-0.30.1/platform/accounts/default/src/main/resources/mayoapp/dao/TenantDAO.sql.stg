@@ -1,0 +1,64 @@
+group TenantDAO;
+
+updateConfiguration() ::= <<
+    UPDATE tenant
+    SET    configuration = :data,
+           configuration_version = :version
+    WHERE  entity_id = :tenant.id
+>>
+
+create() ::= <<
+    INSERT INTO tenant
+                (entity_id,
+                 default_host,
+                 configuration,
+                 configuration_version,
+                 name,
+                 description,
+                 contact_email,
+                 creation_date)
+    VALUES      (:tenant.id,
+                 :tenant.defaultHost,
+                 :data,
+                 :version,
+                 :tenant.name,
+                 :tenant.description,
+                 :tenant.contactEmail,
+                 :tenant.creationDate)
+>>
+
+update() ::= <<
+    UPDATE  tenant
+    SET     name = :tenant.name,
+            description = :tenant.description,
+            contact_email = :tenant.contactEmail,
+            default_host = :tenant.defaultHost,
+            featured_image_id = :tenant.featuredImageId
+    WHERE   entity_id = :tenant.id
+>>
+
+findByDefaultHost() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN tenant
+                   ON entity.id = tenant.entity_id
+    WHERE  default_host = :host
+>>
+
+findAll() ::= <<
+    SELECT *
+    FROM   entity
+           INNER JOIN tenant
+                   ON entity.id = tenant.entity_id
+    ORDER BY creation_date DESC NULLS LAST
+    LIMIT  :number
+    OFFSET :offset
+>>
+
+countAllTenants() ::= <<
+    SELECT count(id)
+    FROM   entity
+           INNER JOIN tenant
+                   ON entity.id = tenant.entity_id
+    WHERE  entity.type = 'tenant'
+>>

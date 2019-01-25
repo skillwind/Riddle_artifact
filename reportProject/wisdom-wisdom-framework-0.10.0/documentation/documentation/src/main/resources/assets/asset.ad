@@ -1,0 +1,485 @@
+== Working with assets
+
+Assets are files delivered by your application or by Wisdom. It can be CSS, JavaScript,
+HTML files or resources such as images.
+
+Wisdom supports three types of assets:
+
+1. Assets packaged with the application, they are placed in the `src/main/resources/assets` directory
+2. Assets served by wisdom but not included in the application, they are placed in the `src/main/assets` directory,
+and copied to the `wisdom/assets` directory
+3. Assets packages as _webjars_.
+
+The list of all available assets is available on `/assets` (http://localhost:9000/assets). This page is only served
+in _development_ mode.
+
+=== Structuring your assets
+
+We strongly recommend that you use the following conventions to organize your assets:
+
+----
+assets
+    └ javascripts
+    └ stylesheets
+    └ images
+----
+
+=== How your assets are packaged and served
+
+The assets from `src/main/resources/assets` are packaged in the application's jar file (don't forget it's an OSGi
+bundle).The assets from `src/main/assets` are placed in the `wisdom/assets` directory and packaged in the distribution zip
+file. Despite this difference, both types of assets are accessible from the `/assets/` path.
+
+Let's see some examples:
+
+----
+src/main/assets/javascripts/script.js ==> /assets/javascripts/script.js
+src/main/assets/stylesheets/style.css ==> /assets/stylesheets/style.css
+src/main/resources/assets/javascripts/script.js ==> /assets/javascripts/script.js
+src/main/resources/assets/stylesheets/style.css ==> /assets/stylesheets/style.css
+----
+
+IMPORTANT: When an asset file is present from both sources, the asset from `src/main/assets` is served. This policy
+lets you override internal files with external assets.
+
+Wisdom contains a built-in controller to serve the assets. By default, this controller provides caching, ETag,
+and gzip compression.
+
+=== Etag support
+The Assets controller automatically manages http://en.wikipedia.org/wiki/HTTP_ETag[ETag HTTP Headers]. The ETag value
+is generated from the file’s last modification date. (If the resource file is embedded into a
+file, the JAR file’s last modification date is used.)
+
+When a web browser makes a request specifying this Etag, the server can respond with `304 NotModified`,
+without body. By this method, bandwidth is saved.
+
+You can disable the Etag support by setting `http.useETag` to `false` in the application configuration:
+
+----
+ http.useETag = false
+----
+
+By default, Etag is enabled.
+
+=== Cache Control
+In addition to the Etag support, Wisdom lets you configure the asset cache time. More precisely the value set by
+Wisdom in the `Cache-Control` HTTP header. By setting the `http.cache_control_max_age`  configuration property in the
+ application configuration, you can set the amount of time (in seconds) the browser can keep the resource in its own
+ cache:
+
+----
+http.cache_control_max_age = 3600
+----
+
+To disable the cache, set this value to 0:
+
+----
+http.cache_control_max_age = 0
+----
+
+This configuration instructs Wisdom to use the `no-cache` value, forbidding the browser and other proxies to use
+caching facilities.
+
+By default, the cache age is set to 3600 seconds.
+
+=== Asset processing
+
+Before being packaged, assets are _processed_. For example, `CoffeeScript` files are compiled to `JavaScript`,
+while `Less` files are compiled to `CSS`. This processing is done during the build process (and not at runtime).
+
+=== CoffeeScript processing
+
+http://coffeescript.org/[CoffeeScript] is a little language that compiles into JavaScript. Underneath that awkward
+Java-esque patina, JavaScript has always had a gorgeous heart. CoffeeScript is an attempt to expose the good parts of
+ JavaScript in a simple way. Any `.coffee` files from your assets are compiled to Javascript automatically. The
+ source map is also generated. For example, the file `src/main/assets/javascripts/some-coffee.coffee`:
+
+[source, coffeescript]
+----
+include::{assetdir}/javascripts/some-coffee.coffee[]
+----
+
+is accessible from `/assets/javascripts/some-coffee.js`:
+
+[source, javascript]
+----
+include::{assetoutdir}/javascripts/some-coffee.js[]
+----
+
+NOTE: In _watch_ mode, the `.coffee` files are automatically recompiled.
+
+The CoffeeScript compilation relies on the original compiler executed on top of the _node.js_ runtime.
+
+=== Typescript processing
+
+http://www.typescriptlang.org/[TypeScript] lets you write JavaScript the way you really want to. TypeScript is a typed
+superset of JavaScript that compiles to plain JavaScript.
+
+Any `.ts` files from your assets are compiled to Javascript automatically. The source maps are also generated. For
+example, the file `src/main/assets/typescript/Animal.ts`:
+
+[source, typescript]
+----
+include::{assetdir}/javascripts/Animal.ts[]
+----
+
+is accessible from `/assets/javascripts/Animal.js`:
+
+[source, typescript]
+----
+include::{assetoutdir}/javascripts/Animal.js[]
+----
+
+NOTE: In _watch_ mode, the `.ts` files are automatically recompiled.
+
+The TypeScript compilation relies on the original compiler executed on top of the _node.js_ runtime. The compilation
+process is configured from the `typescript` element in your `pom.xml` file such as:
+
+[source, xml]
+----
+<typescript>
+    <removeComments>true</removeComments>
+    <module>AMD</module>
+    <target>ES5</target>
+</typescript>
+----
+
+Are supported:
+
+* `enabled` (boolean) : enables / disables the typescript processing (enabled by default)
+* `version` : the Typescript compiler version
+* `generateDeclaration` (boolean) : enables/ disables corresponding '.d.ts' file (enabled by default)
+* `generateMap` (boolean) : enables / disables corresponding '.map' file (enabled by default)
+* `removeComments` (boolean) : strip out comment from the generated javascript files (disabled by default)
+* `mapRoot` : Specifies the location where debugger should locate map files instead of generated locations.
+* `module` : Specify module code generation: 'commonjs' or 'amd'
+* `target` : Specify ECMAScript target version: 'ES3' (default), 'ES5', or 'ES6' (experimental)
+* `noImplicitAny` (boolean) : Raise error on expressions and declarations with an implied 'any' type (disabled by default)
+* `otherArguments` (list) : Other arguments you want to pass to the `tsc` compiler.
+
+
+=== Less processing
+
+http://lesscss.org/[LESS] extends CSS with dynamic behavior such as variables, mixins,
+operations and functions. Wisdom automatically compiles any `.less` files from your assets to CSS.  For example,
+the file `src/main/assets/stylesheets/site.less`:
+
+[source, less]
+----
+include::{assetdir}/stylesheets/site.less[]
+----
+
+is accessible from `/assets/stylesheets/site.css`:
+
+[source, javascript]
+----
+include::{assetoutdir}/stylesheets/site.css[]
+----
+
+NOTE: In _watch_ mode, the `.less` files are automatically recompiled.
+
+The Less version compilation relies on the original less compiler executed on top of the _node.js_ runtime.
+
+=== Stylesheets Aggregation and Minification
+
+Wisdom integrates https://github.com/jakubpawlowicz/clean-css[Clean-CSS] to aggregate and minify stylesheets. By
+default, it minifies all `.css` file into a `-min.css` file. However this behavior can be configured to aggregate the
+files and minify the result.
+
+In your `pom.xml`, in the `wisdom-maven-plugin` configuration section, add:
+
+[source, xml]
+----
+<stylesheets>
+    <aggregations>
+        <aggregation>
+            <minification>true</minification> <!-- optional, default to true -->
+            <output>my-css.css</output> <!-- optional -->
+            <files>
+                <file>style.css</file>
+                <file>socket/socket.css</file>
+            </files>
+        </aggregation>
+    </aggregations>
+</stylesheets>
+----
+
+The `stylesheets` element let you configure the aggregation and minification. You can have several `aggregation`
+element under the `aggregations` element. Each aggregation must list the set of files it aggregates. Only _internal_
+assets (i.e. from `src/main/resources/assets`) can be aggregated. Each files is looked up from the
+`target/classes/assets` directory (containing the compiles assets). The extension can be omitted (for example,
+`style` instead of `style.css`). The aggregation can optionally defined the output file, also related to
+`target/classes/assets`. By default it builds the name as follows: _artifactid-min.css_ (or just _artifactid.css_ if
+minification is disabled).
+
+Aggregation also supports a `removeIncludedFiles` attribute (disabled by default) to remove the individual aggregated
+files after processing.
+
+If you don't want to list all the file one by one, you can use `FileSets` instead of `<files>`:
+
+[source, xml]
+----
+<fileSets>
+    <fileSet>
+        <includes>
+            <include>stylesheets/*/*.css</include>
+            <include>less/*.css</include>
+        </includes>
+    </fileSet>
+</fileSets>
+----
+
+Be aware that wildcards can introduce ordering issue as the order of the selected files may depend on the file system
+ you are using.
+
+Using a file set let you exclude files too, as well as set the base directory. By default, the directory is the
+location of internal assets (`target/classes/assets`):
+
+[source, xml]
+----
+<fileSets>
+    <fileSet>
+        <directory>target/external</directory>
+        <excludes>
+            <exclude>**/*.map</exclude>
+        </excludes>
+        <includes>
+            <include>*.css</include>
+        </includes>
+    </fileSet>
+</fileSets>
+----
+
+IMPORTANT: if `files` is set, the `fileSets` are ignored.
+
+=== JavaScript Aggregation and Minification
+
+Wisdom integrates https://developers.google.com/closure/[Google Closure] to check, aggregate and minify JavaScript
+files. For any JavaScript file (even the one generated by the CoffeeScript compiler), a minified version is generated.
+ The minified file name ends with `-min.js`. For example, `my-script.js` will be minified into `my-script-min.js`.
+
+To use the minified version, add the `-min` suffix to your `script` tags in your templates or HTML files.
+
+NOTE: Files already minified are not re-minified.
+
+You can configure the optimization level of the Closure Compiler and the _pretty print_ option from your
+`pom.xml` file:
+
+[source, xml]
+----
+<configuration>
+    <googleClosureCompilationLevel>ADVANCED_OPTIMIZATIONS</googleClosureCompilationLevel>
+    <googleClosurePrettyPrint>true</googleClosurePrettyPrint>
+</configuration>
+----
+
+The value of the compilation level can be `WHITESPACE_ONLY` (default), `SIMPLE_OPTIMIZATIONS` or
+`ADVANCED_OPTIMIZATIONS`.
+
+The pretty print option lets you configure how the minified file is formatted . Enabling pretty print impacts the final
+ file size but is much more readable.
+
+Aggregation is configured inside the `<javascript>` element:
+
+[source, xml]
+----
+<javascript>
+    <aggregations>
+        <aggregation>
+            <files>
+                <file>coffee/math</file>
+                <file>js/log.js</file>
+            </files>
+            <output>math-min.js</output>
+        </aggregation>
+    </aggregations>
+</javascript>
+----
+
+You can have several `aggregation` element under the `aggregations` element. Each aggregation must list the set of
+files it aggregates. Only _internal_ assets (i.e. from `src/main/resources/assets`) can be aggregated. Each files is
+looked up from the `target/classes/assets` directory (containing the compiles assets). The extension can be omitted
+(for example, `coffee/math` instead of `coffee/math.js`). The aggregation can optionally defined the output file, also
+related to `target/classes/assets`. By default it builds the name as follows: _artifactid-min.js_.
+
+Aggregation also supports a `removeIncludedFiles` attribute (disabled by default) to remove the individual aggregated
+files after processing.
+
+If you don't want to list all the file one by one, you can use `FileSets` instead of `<files>`:
+
+[source, xml]
+----
+<fileSets>
+    <fileSet>
+        <includes>
+            <include>coffee/*.js</include>
+            <include>js/*.js</include>
+        </includes>
+    </fileSet>
+</fileSets>
+----
+
+Be aware that wildcards can introduce ordering issue as the order of the selected files may depend on the file system
+ you are using.
+
+Using a file set let you exclude files too, as well as set the base directory. By default, the directory is the
+location of internal assets (`target/classes/assets`):
+
+[source, xml]
+----
+<fileSets>
+    <fileSet>
+        <directory>target/external</directory>
+        <excludes>
+            <exclude>**/*.map</exclude>
+        </excludes>
+        <includes>
+            <include>*.js</include>
+        </includes>
+    </fileSet>
+</filSsets>
+----
+
+IMPORTANT: if `files` is set, the `fileSets` are ignored.
+
+You can also disable the Google Closure support with:
+
+[source, xml]
+----
+<configuration>
+    <skipGoogleClosure>true</skipGoogleClosure>
+</configuration>
+----
+
+In _watch mode_, you can disable Google Closure support with: `mvn wisdom:run -DskipGoogleClosure=true`
+
+=== Image optimizations
+
+Images from your assets are automatically optimize to reduce their sizes. The optimization uses
+https://github.com/imagemin/imagemin[ImageMin] and process `jpg`, `png`, `gif` and `svg`.
+
+You can skip the image optimization using `<skipImageOptimization>true</skipImageOptimization>` or in the command line
+using `-DskipImageOptimization=true`.
+
+You can configure the optimization using the `<imageMinification>` element in your `pom.xml` file:
+
+[source, xml]
+----
+<configuration>
+    <imageMinification>
+        <enabled>true</enabled> <!-- equivalent to skipImageOptimization -->
+        <version>2.0.0</version> <!-- the imagemin-cli version -->
+
+        <interlaced>true</interlaced> <!-- whether or not Gif should be interlaced -->
+        <progressive>true</progressive> <!-- whether or not JPEG should be progressive -->
+        <optimizationLevel>3</optimizationLevel> <!-- the PNG optimization level in [0,7] -->
+    </imageMinification>
+</configuration>
+----
+
+=== WebJar packaging
+
+The internal assets from your project can be packaged into a webjar. This WebJar will contained the process versions
+of your assets and has a structure conform to the webjar specification. WebJars are really useful to share assets.
+
+WebJar packaging is disabled by default, but can be easily enabled using:
+
+[source, xml]
+----
+<configuration>
+    <packageWebJar>true</packageWebJar>
+</configuration>
+----
+
+By default, all the internal resources of your project are packaged into a webjar. This webjar use the project's
+artifact id as name, and project's version as version. The created artifact use the `webjar` classifier.
+
+The webjar can be customized using the `webjar` element in the `pom.xml` file:
+
+[source, xml]
+----
+<webjar>
+    <!-- change the webjar name -->
+    <name>sample-resources</name>
+    <!-- change the webjar version -->
+    <version>1.0</version>
+    <!-- change the webjar classifier -->
+    <classifier>resource</classifier>
+    <!-- the selected set of file -->
+    <fileset>
+        <directory>\${project.build.directory}/classes/assets</directory>
+        <excludes>
+            <exclude>**/js/*</exclude>
+        </excludes>
+    </fileset>
+</webjar>
+----
+
+IMPORTANT: The fileset directory must be a full path. By default the asset ouput directory is used.
+
+=== Customizing asset location
+
+You extend the location where Wisdom is looking for assets.
+
+First create the `src/main/instances` directory and add the following snippet to your `pom.xml` file:
+
+[source,xml]
+----
+<execution>
+    <id>copy-instances</id>
+    <!-- here the phase you need -->
+    <phase>validate</phase>
+    <goals>
+        <goal>copy-resources</goal>
+    </goals>
+    <configuration>
+        <outputDirectory>${basedir}/target/wisdom/application</outputDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/instances</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </configuration>
+</execution>
+----
+
+Then create a `org.wisdom.resources.AssetController-A_NAME.cfg` in the `instances` directory you just created. Change
+ `A_NAME` by an identifier that you can understand. In this file you can set:
+
+[source]
+----
+# the file system path relative to the Wisdom directory in which external
+# assets are located.
+path=public
+# a boolean indicating whether or not it should also look into bundles
+manageAssetsFromBundles=true
+# the URL root to load these assets
+url=/public
+# is `manageAssetsFromBundles` is set to true the path inside bundles
+# where assets are located
+pathInBundles=/interns/
+----
+
+Let's see two examples. In this first example, it extends assets locations with an _in bundle_ lookup looking for
+assets in the `/interns` directory (inside the jar file). These assets are served from the `/internal` url. As the
+`path` property is not set, it does not support assets located on the file system.
+
+[source]
+----
+manageAssetsFromBundles=true
+url=/internal
+pathInBundles=/interns/
+----
+
+This second example extends the asset lookup with an external location (`public`) served from the `/public` url:
+
+[source]
+----
+path=public
+manageAssetsFromBundles=false
+url=/public
+----
+
+IMPORTANT: the `path` property must always starts with a `/`. The  `pathInBundles` value must start and end with a `/`.
+

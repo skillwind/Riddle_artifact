@@ -1,0 +1,19 @@
+            service.{{operationId}}({{#hasParams}}{{#allParams}}{{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}{{/hasParams}}{{#hasAuthMethods}}{{#hasParams}}, {{/hasParams}}io.vertx.rxjava.ext.auth.User.newInstance(user){{/hasAuthMethods}}).subscribe(
+            {{#returnType}}
+                {{#isListContainer}}
+                verticleHelper.getRxResultHandler(message, true, new TypeReference<{{{returnType}}}>(){}),
+                {{/isListContainer}}
+                {{^isListContainer}}
+                    {{#returnTypeIsPrimitive}}
+                verticleHelper.getRxResultHandler(message, false, new TypeReference<{{{returnType}}}>(){}),
+                    {{/returnTypeIsPrimitive}}
+                    {{^returnTypeIsPrimitive}}
+                verticleHelper.getRxResultHandler(message, true, new TypeReference<{{{returnType}}}>(){}),
+                    {{/returnTypeIsPrimitive}}
+                {{/isListContainer}}
+            {{/returnType}}
+            {{^returnType}}
+                verticleHelper.getRxResultHandler(message, false, new TypeReference<Void>(){}),
+            {{/returnType}}
+                verticleHelper.getErrorAction(message, {{#vendorExtensions}}{{x-serviceId-varName}}{{/vendorExtensions}})
+            );

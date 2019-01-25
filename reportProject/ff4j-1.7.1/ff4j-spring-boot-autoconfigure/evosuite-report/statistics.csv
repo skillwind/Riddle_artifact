@@ -1,0 +1,4 @@
+TARGET_CLASS,criterion,Coverage,Total_Goals,Covered_Goals
+org.ff4j.spring.boot.autoconfigure.FF4JWebConfiguration,MTHD_PROB_RISK,0.0,1,0
+org.ff4j.spring.boot.autoconfigure.FF4JWebConfiguration,MTHD_PROB_RISK,0.0,1,0
+org.ff4j.spring.boot.autoconfigure.FF4JWebConfiguration,MTHD_PROB_RISK,0.0,1,0

@@ -1,0 +1,72 @@
+== HTTP Configuration
+
+HTTP and HTTPS ports can be configured using:
+
+----
+http.port = 9000
+https.port = 9001
+----
+
+Passing `-1` to one of these value disables the support.
+
+You can also configure:
+
+----
+http {
+    upload {
+        disk.threshold = 16384 # The threshold switching from memory to file storage for file upload
+        max = -1 # The max size in bytes. If an uploaded file exceeds this size, a bad request is immediately returned
+    }
+}
+request.body.max.size = 102400 # the max body size, the rest is not read.
+----
+
+== Configuring HTTPS
+
+Wisdom can be configured to serve HTTPS. To enable this, simply tell Wisdom which port to listen to using the `https.port`
+system property. For example:
+
+[source, shell]
+----
+export JVM_ARGS="-Dhttps.port=9005"
+./chameleon.sh start
+----
+
+The `https.port` property can also be written in the application configuration file.
+
+=== SSL Certificates
+By default, Wisdom generates itself a self signed certificate, however typically this will not be suitable for
+serving a website in production. Wisdom uses Java key stores to configure SSL certificates and keys.
+
+Signing authorities often provide instructions on how to create a Java keystore (typically with reference to Tomcat
+configuration). The official Oracle documentation on how to generate keystores using the JDK keytool utility can be
+found http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html[here].
+
+Having created your keystore, the following *system properties* can be used to configure Wisdom to use it:
+
+* `https.keyStore`: The path to the keystore containing the private key and certificate,
+if not provided generates a keystore for you
+* `https.keyStoreType`: The key store type, defaults to JKS
+* `https.keyStorePassword`: The password, defaults to a blank password
+* `https.keyStoreAlgorithm`: The key store algorithm, defaults to the platforms default algorithm
+* `https.trustStore`: The path to the keystore containing the trusted key
+* `https.trustStoreType`: The trust key store type, defaults to JKS
+* `https.trustStorePassword`: The trust key store password, defaults to a blank password
+* `https.trustStoreAlgorithm`: The trust key store algorithm, defaults to the platforms default algorithm
+
+Paths are either relative to the server root or absolute.
+
+If `https.trustStore` if set to `noCA`, all host are trusted. Be aware to not use this configuration in production.
+
+=== Turning HTTP off
+To disable binding on the HTTP port, set the `http.port` system property to be `-1`, eg:
+
+[source, shell]
+----
+export JVM_ARGS="-Dhttp.port=-1 -Dhttps.port=9005 -Dhttps.keyStore=/path/to/keystore -Dhttps.keyStorePassword=pwd"
+./chameleon.sh start
+----
+
+The `http.port` property can also be written in the application configuration file, and as a consequence,
+HTTP can be disabled from the application configuration file.
+

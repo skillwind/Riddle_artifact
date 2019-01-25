@@ -1,0 +1,36 @@
+badsyntax
+
+---
+- id: "webapp"
+  path: "/"
+  connectionPool:
+    connectTimeout: 3000
+  origins:
+  - id: "webapp-01"
+    host: "apphost1:9094"
+
+- id: "landing"
+  path: "/landing/"
+  healthCheckUri:
+    uri: "/alternative.txt"
+  connectionPool:
+    connectTimeout: 4000
+  origins:
+  - id: "landing-01"
+    host: "landinghost1:9091"
+  - id: "landing-02"
+    host: "landinghost2:9092"
+  - id: "landing-03"
+    host: "landinghost3:9093"
+
+- id: "shopping"
+  path: "/shop/"
+  healthCheck:
+    uri: "/version.txt"
+  connectionPool:
+    maxConnectionsPerHost: 200
+    maxPendingConnectionsPerHost: 250
+    connectTimeout: 5000
+  origins:
+  - id: "shopping-01"
+    host: "shoppinghost1:9090"

@@ -1,0 +1,161 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<h1 class="small" ng-show="!isNew()">{{'content.title.editArticle' | translate}}</h1>
+<h1 class="small" ng-show="isNew()">{{'content.title.newArticle' | translate}}</h1>
+
+<div class="loading" ng-show="!article.slug && !isNew()"></div>
+<form name="articleForm" ng-show="article.slug || isNew()">
+    <article class="entity">
+
+        <div>
+
+            <!-- Title -->
+            <h1>
+                <input type="text" class="title" ng-model="article.title" placeholder="{{'content.placeholder.articleTitle' | translate}}" required/>
+            </h1>
+
+            <!-- Description -->
+            <div ng-show="!isNew()">
+                <label>{{'content.misc.content' | translate}}</label>
+                <textarea class="" rows="10" ng-model="article.content" ck-editor />
+            </div>
+
+            <div class="block" ng-show="!isNew()">
+                <h3>{{'image.title.images' | translate:getTranslationProperties()}}</h3>
+
+                <upload-list id="'image-gallery'"></upload-list>
+
+                <image-list entity="article"
+                            sortable-options="getImagesSortableOptions()"
+                            on-select-feature="selectFeatureImage(image)"
+                            on-edit="editImage(image)"
+                            on-remove="removeImage(image)">
+                </image-list>
+
+                <image-upload ng-if="!isNew()"
+                              upload-uri="{{getImageUploadUri()}}"
+                              drop-text="'upload.explanation.dropArticle' | translate:getTranslationProperties()"
+                              target="image-gallery"
+                              id="'image-gallery'">
+                </image-upload>
+            </div>
+        </div>
+
+        <!-- Addons -->
+        <div ng-if="addons.length > 0 && !isNew()">
+            <addon-list addons="addons" entity="article" localized-entity="localizedArticle" />
+        </div>
+
+    </article>
+    </div>
+    <aside>
+        <div class="buttons">
+            <div ng-show="isNew()">
+                <!-- Create new article -->
+                <div class="hasLoading">
+                    <button ng-disabled="articleForm.$invalid" ng-click="updateArticle()" class="btn btn-large btn-primary">
+                        {{'entity.action.create' | translate}}
+                    </button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
+            </div>
+            <div ng-show="!isNew()">
+                <div ng-show="article.published == undefined">
+                    <div class="hasLoading">
+                        <button ng-disabled="articleForm.$invalid" ng-click="updateArticle()" class="btn btn-large btn">
+                            {{'entity.action.save' | translate}}
+                        </button>
+                        <button ng-click="publishArticle()" class="btn btn-large btn-primary">
+                            {{'entity.action.publish' | translate}}
+                        </button>
+                        <span ng-class="{'loading': isSaving}"></span>
+                    </div>
+                </div>
+                <div ng-show="article.published != undefined">
+                    <div class="hasLoading">
+                        <button ng-disabled="articleForm.$invalid" ng-click="updateArticle()" class="btn btn-large btn-primary">
+                            {{'entity.action.update' | translate}}
+                        </button>
+                        <span ng-class="{'loading': isSaving}"></span>
+                    </div>
+                </div>
+                <!-- Publish / update article -->
+            </div>
+        </div>
+        <p/>
+
+        <div class="uri" ng-show="!isNew()">
+            <a href="/news/{{article.slug}}" target="_new">
+                /news/{{article.slug}}
+            </a>
+        </div>
+
+        <div class="block delete" ng-show="!isNew()">
+            <small class="click-me" ng-click="confirmDeletion()">
+                {{'content.action.deleteArticle' | translate}}
+            </small>
+        </div>
+
+        <div class="block" ng-show="!isNew()">
+            <div ng-show="article.published != undefined">
+                <div>
+                    <span ng-class="{strong: article.published}">
+                        {{'content.status.published' | translate}}
+                    </span>
+                    <switch-button ng-model="article.published"></switch-button>
+                    <span ng-class="{strong: !article.published}">
+                        {{'content.status.unpublished' | translate}}
+                    </span>
+                </div>
+            </div>
+            <div ng-show="article.published">
+                <p>
+                    {{'content.status.publishedOn' | translate:getTranslationProperties()}}
+                    <br/>
+                    <small ng-click="changePublicationDate()">
+                        {{'content.action.changePublicationDate' | translate}}
+                    </small>
+                </p>
+
+                <div ng-show="newPublicationDate != null">
+                    <div class="input-append date" id="datePicker">
+                        <input type="text" ng-model="newPublicationDate" data-date-format="yyyy-mm-dd" bs-datepicker>
+                        <span class="add-on"><i class="icon-calendar"></i></span>
+                    </div>
+
+                    <br/>
+
+                    <div class="input-append" id="timePicker">
+                        <input type="text" ng-model="newPublicationTime">
+                        <span class="add-on"><i class="icon-time"></i></span>
+                    </div>
+
+                    <div>
+                        <a class="btn" ng-click="cancelChangePublicationDate()">
+                            {{'entity.action.cancel' | translate}}
+                        </a>
+                        <a class="btn btn-info" ng-click="validateNewPublicationDate()">
+                            {{'content.action.changeDate' | translate}}
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="block" ng-show="!isNew() && models.length > 0">
+            <h3>{{'entity.title.model' | translate}}</h3>
+            <select ng-model="article.model" ng-options="model.id as model.name for model in models">
+                <option value="">{{'entity.misc.defautlModel' | translate}}</option>
+            </select>
+        </div>
+
+    </aside>
+</form>

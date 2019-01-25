@@ -1,0 +1,42 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<h4>{{carrier.title}}</h4>
+<div class="destinations">
+    {{'settings.misc.carrierDestination' | translate:getTranslationProperties()}}
+    {{carrier.displayDestinations}}
+</div>
+<div class="duration">
+    {{'settings.misc.deliveryTime' | translate}}
+    {{carrier.minimumDays}} - {{carrier.maximumDays}}
+    {{'settings.misc.deliveryDays' | translate:getTranslationProperties()}}
+</div>
+<table class="table" ng-show="carrier.strategy == 'weight' || carrier.strategy == 'price'">
+    <thead>
+    <th>
+        <span ng-show="carrier.strategy == 'weight'">
+            {{'settings.misc.weight' | translate}}
+        </span>
+        <span ng-show="carrier.strategy == 'price'">
+            {{'settings.misc.orderAmount' | translate}}
+        </span>
+    </th>
+    <th>{{'settings.misc.shippingPrice' | translate}}</th>
+    </thead>
+    <tr ng-repeat="rule in carrier.rules">
+        <td>
+            <span ng-show="carrier.strategy == 'weight'">{{rule.fromValue}} - {{rule.upToValue}} {{weightUnit}}</span>
+            <span ng-show="carrier.strategy == 'price'">{{rule.fromValue}} - {{rule.upToValue}} {{mainCurrency}}</span>
+        </td>
+        <td>{{rule.price}} {{mainCurrency}}</td>
+    </tr>
+</table>
+<div ng-show="carrier.strategy == 'flat'">
+        {{'settings.misc.costPerOrderAndPerItem' | translate:getTranslationProperties()}}
+</div>

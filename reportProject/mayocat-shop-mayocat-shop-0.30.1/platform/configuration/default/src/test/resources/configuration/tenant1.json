@@ -1,0 +1,6 @@
+{
+    "locales": {
+        "main": "fr_FR",
+        "others": ["ro", "jp"]
+    }
+}

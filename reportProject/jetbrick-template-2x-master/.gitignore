@@ -1,0 +1,15 @@
+*.class
+*.jar
+*.zip
+*.asc
+
+target/
+
+.project
+.classpath
+.settings/
+
+.idea/
+*.iml
+
+.DS_Store

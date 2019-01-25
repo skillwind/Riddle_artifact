@@ -1,0 +1,144 @@
+<!--
+  #%L
+  Wisdom-Framework
+  %%
+  Copyright (C) 2013 - 2014 Wisdom Framework
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<html>
+<head>
+    <title>Car Service</title>
+    <script src="/assets/jquery-2.0.3.min.js"></script>
+    <link rel="stylesheet" href="/libs/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/libs/css/bootstrap-theme.min.css"/>
+    <script src="/libs/jquery.js"></script>
+    <script src="/libs/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <div class="starter-template">
+        <h1>Car Service</h1>
+
+
+        <p>
+            Enter some information, that will be check using <em>Bean Validation</em>.
+        </p>
+
+        <div id="result" class="bg-warning"></div>
+
+        <div id="form">
+
+            <h3>Driver</h3>
+            <label for="name">Name:</label> <input id="name" type="text" name="name"/><br/>
+            <label for="name">Email:</label> <input id="email" type="email" name="email"/><br/>
+            <label for="age">Age:</label> <input id="age" type="number" name="age"/><br/>
+            <label for="license">Driver License</label> <input id="license" type="checkbox"
+                                                               value="license" name="license"/><br/>
+
+            <h3>Car</h3>
+            <label for="manufacturer">Manufacturer:</label> <input id="manufacturer" type="text"
+                                                                   name="manufacturer"/><br/>
+            <label for="plate">License Plate:</label> <input id="plate" type="text" name="plate"/><br/>
+            <label for="seats">#Seats:</label> <input id="seats" type="number" name="seats"/><br/>
+
+            <br/>
+            <button name="submit" id="manual">Manual check</button>
+            &nbsp;
+            <button name="submit" id="automatic">Automatic
+                check
+            </button>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function createStructure() {
+        return {
+            manufacturer: $("#manufacturer").val(),
+            licensePlate: $("#plate").val(),
+            seatCount: parseInt($("#seats").val()),
+            driver: {
+                name: $("#name").val(),
+                email: $("#email").val(),
+                age: parseInt($("#age").val()),
+                hasDrivingLicense: $("#license").is(":checked")
+            }
+        };
+    }
+
+    function manual() {
+        var structure = createStructure();
+        console.log(structure);
+        $.ajax({
+            type: "POST",
+            url: /*[[${#routes.route('check')}]]*/ "#",
+            data: JSON.stringify(structure),
+            contentType: 'application/json'
+        }).done(function () {
+            $("#result").html("Data validated !");
+        })
+                .fail(function (data) {
+                    var json = JSON.parse(data.responseText);
+                    var message = "<strong>Error detected:</strong></br>";
+                    for (var i = 0; i < json.length; i++) {
+                        var object = json[i];
+                        if (object.message != null) {
+                            message = message + object.message + "<br/>";
+                        }
+                    }
+                    $("#result").html(message);
+                });
+    }
+
+    function automatic() {
+        var structure = createStructure();
+        console.log(structure);
+        $.ajax({
+            type: "POST",
+            url: /*[[${#routes.route('auto')}]]*/ "#",
+            data: JSON.stringify(structure),
+            contentType: 'application/json'
+        }).done(function () {
+            $("#result").html("Data validated !");
+        })
+                .fail(function (data) {
+                    var json = JSON.parse(data.responseText);
+                    var message = "<strong>Error detected:</strong></br>";
+                    for (var i = 0; i < json.length; i++) {
+                        var object = json[i];
+                        if (object.message != null) {
+                            message = message + object.message + "<br/>";
+                        }
+                    }
+                    $("#result").html(message);
+                });
+    }
+
+    $(document).ready(function () {
+        $("#manual").click(function () {
+            manual();
+        });
+        $("#automatic").click(function () {
+            automatic();
+        });
+    });
+
+    /*]]>*/
+</script>
+
+
+</body>
+</html>

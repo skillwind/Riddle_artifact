@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Custom build args matrix config file
+# Remove the .example from the name of the file and add/remove/update the build args as desired
+
+BUILD_ARGS_MATRIX=(
+ ""
+ "--P cloudera"
+ "-P hortonworks"
+)

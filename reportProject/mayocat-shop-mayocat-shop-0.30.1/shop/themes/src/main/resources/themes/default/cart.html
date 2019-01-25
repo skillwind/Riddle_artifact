@@ -1,0 +1,29 @@
+<div class="content">
+
+    <div class="checkout-progress">
+        <ul class="wizard">
+            <li class="step active">1. Your order</li>
+            <li class="step">2. Shipping information</li>
+            <li class="step">3. Payment</li>
+            <li class="step">4. Confirmation</li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+
+    {{#cart}}
+    <section class="cart">
+        <div id="cart-table">
+            {{includeTemplate 'cart_table.html'}}
+        </div>
+    </section>
+
+    <aside>
+    </aside>
+
+    <div class="clearfix"></div>
+    {{/cart}}
+</div>
+
+<script id="cart-table-template" type="text/x-handlebars-template">
+    {{templateSource 'cart_table.html'}}
+</script>

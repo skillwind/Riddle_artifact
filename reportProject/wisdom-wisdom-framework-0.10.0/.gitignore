@@ -1,0 +1,12 @@
+./chameleon/
+target/
+.project
+.settings
+.classpath
+logs
+*.iml
+.idea
+
+/wisdom-jdbc/wisdom-jdbc-drivers/derby/derby.log
+
+.java-version

@@ -1,0 +1,73 @@
+<!--
+
+    Copyright (c) 2012, Mayocat <hello@mayocat.org>
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+-->
+<form>
+    <div class="page-header">
+        <h1 class="">{{'settings.title.shop' | translate}}</h1>
+    </div>
+
+    <article class="entity" ng-class="{'loading': tenant.slug == undefined}">
+        <div id="settings">
+            <div class="span8">
+                <!-- header -->
+
+                <div ng-show="tenant.slug != undefined">
+
+                    <div class="block">
+                        <!-- Shop name -->
+                        <p>{{'settings.tenant.shopName' | translate}}</p>
+                        <input type="text" ng-model="tenant.name" placeholder="{{'settings.tenant.shopNamePlaceholder' | translate}}" />
+
+                        <!-- Shop description -->
+                        <p>{{'settings.tenant.shopDescription' | translate}}</p>
+                        <textarea ng-model="tenant.description" ck-editor />
+
+                        <!-- Contact email -->
+                        <p>{{'settings.tenant.contactEmail' | translate}}</p>
+                        <input type="text" ng-model="tenant.contactEmail" placeholder="{{'settings.tenant.contactEmailPlaceholder' | translate}}" />
+
+                        <!-- Shop logo -->
+                        <p>{{'settings.tenant.shopLogo' | translate}}</p>
+                        <p ng-show="tenant._embedded.featuredImage && !uploadingLogo">
+                                <img ng-src="{{tenant._embedded.featuredImage.file._href}}?height=100"/>
+                        </p>
+
+                        <div>
+                            <upload-list id="'logo'"></upload-list>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div ng-show="!uploadingLogo">
+                            <image-upload upload-uri="/api/tenant/attachments"
+                                          multiple="false"
+                                          drop-text="'upload.explanation.dropLogo' | translate"
+                                          target="logo"
+                                          label="upload.action.select"
+                                          id="'logo'">
+                            </image-upload>
+                        </div>
+                    </div>
+
+                    <!-- Addons -->
+                    <div ng-if="addons.length > 0 && !isNew()">
+                        <addon-list addons="addons" entity="tenant" />
+                    </div>
+                </div>
+
+                <!-- Save button -->
+                <div class="hasLoading">
+                    <button ng-click="updateTenant()" class="btn btn-large btn-primary">
+                        {{'entity.action.update' | translate}}
+                    </button>
+                    <span ng-class="{'loading': isSaving}"></span>
+                </div>
+            </div>
+        </div>
+    </article>
+</form>

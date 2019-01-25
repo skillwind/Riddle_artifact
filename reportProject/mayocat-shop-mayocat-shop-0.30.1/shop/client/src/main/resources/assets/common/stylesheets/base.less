@@ -1,0 +1,548 @@
+/*
+ * Copyright (c) 2012, Mayocat <hello@mayocat.org>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+ /* apply a natural box layout model to all elements
+   http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
+  color: @fontColor;
+}
+
+a, span.link {
+  color: @linkColor;
+  text-decoration: none;
+}
+
+a:hover, span.link:hover {
+  color: @linkColorHover;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@font-face {
+    font-family: 'latolight';
+    src: url('../fonts/lato-light-webfont.eot');
+    src: url('../fonts/lato-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/lato-light-webfont.woff') format('woff'),
+         url('../fonts/lato-light-webfont.ttf') format('truetype'),
+         url('../fonts/lato-light-webfont.svg#latolight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+  margin: 0px;
+  font-family: 'latolight';
+}
+
+ul, li {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.sidebar-nav li h2 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+small {
+  font-size: 11px;
+}
+
+h1.big {
+  font-size: 40px;
+  margin: 41px 0px 15px 0px;
+}
+
+h1.small {
+  font-size: 18px;
+  margin: 48px 0px 15px 0px;
+}
+
+.sidebar-nav header h2, .header h2 {
+  font-size: 18px;
+  line-height: 16px;
+  max-width: 237px;
+}
+
+.sidebar-nav h2 {
+  font-size: 16px;
+  line-height: 20px;
+  max-width: 237px;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 20px;
+  margin: 0px 0px 10px 0px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.disabled {
+  background-color: #eee;
+}
+
+.has-margin-below {
+  margin-bottom: 20px;
+}
+
+/* Tables */
+
+table tr.hasInputs td {
+  line-height: 38px;
+  padding-bottom: 0;
+}
+
+/* Forms */
+
+form legend {
+  border: none;
+  line-height: 22px;
+
+  div.pull-right {
+    font-size: 12px;
+    padding-right: 10px;
+  }
+}
+
+/* Fields */
+
+input, textarea {
+  border: solid 1px @borderInput !important;
+  resize: none;
+}
+
+input[type='text'].title {
+  font-size: 22px;
+  height: 39px;
+  padding-left: 9px;
+}
+
+.entity textarea, .entity input:not([type=submit]):not([type=file]) {
+  width: 100%;
+}
+
+input:not([type=submit]):not([type=file]):not([type=checkbox]) {
+  height: 30px !important;
+}
+
+.input-append .add-on, .input-prepend .add-on {
+  height: 30px !important;
+}
+
+h1 {
+  .input-append .add-on, .input-prepend .add-on {
+    height: 40px !important;
+  }
+}
+
+h1 input:not([type=submit]):not([type=file]):not([type=checkbox]),
+h1 .input-append .add-on, h1.input-prepend .add-on {
+  height: 40px !important;
+  padding-top: 8px;
+}
+
+/* Buttons */
+
+.btn {
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: @linkColor;
+  color: #FFF;
+  background-image: none;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: @linkColorHover;
+}
+
+.btn-large {
+  margin: 0px 0px 10px 0px;
+}
+
+/* Pointer cursor */
+
+.click-me, .drag-me {
+  cursor: pointer;
+}
+
+/* Strong block */
+
+.strong {
+  font-weight: bold;
+}
+
+/* Align right block */
+
+.align-right {
+  text-align: right;
+}
+
+/* Main Layout */
+
+#main {
+  float: left;
+  padding-left: 15px;
+  margin: 0px 0px 0px 0px;
+}
+
+#main.hasSubList {
+  margin: 0px 0px 0px 179px;
+}
+
+#main article {
+  width: 460px;
+  float: left;
+  margin-right: 30px;
+}
+
+#main article.large {
+  width: 680px;
+}
+
+#main aside {
+  float: left;
+}
+
+
+/* Entity */
+
+.entity {
+  &.loading {
+    background-position: left;
+    margin-left: 0px;
+  }
+
+  div.header {
+    margin-bottom: 20px;
+  }
+}
+
+.control-group.default input {
+  opacity: 0.7;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+div.main-container {
+  padding-top: 25px;
+  background-color: white;
+  border: 1px solid #f8e9d8;
+  border-bottom: none;
+}
+
+.navbar-inner .container {
+/* The search close add-on messes up with the height of the navbar.
+   So limit its height whatever is computed. */
+  max-height: 40px;
+}
+
+/* Reset some bootstrap border radius */
+pre,
+.well {
+  border-radius: 0;
+}
+
+/* Global loader */
+
+body > div.loader {
+  background: url('/common/images/loader.gif') no-repeat center center;
+  width: 100%;
+  height: 80%;
+  height: -moz-calc(100% -175px);
+  height: -webkit-calc(100% -175px);
+  height: calc(100% -175px);
+}
+
+/* Loading block */
+
+.loading {
+  background: url('/common/images/loader-small.gif') no-repeat center center;
+  min-height: 34px;
+  min-width: 34px;
+  display: inline-block;
+}
+
+.hasLoading {
+  .loading {
+    float: left;
+    margin: 4px 7px;
+  }
+
+  button {
+    float: left;
+    margin-right: 5px;
+  }
+
+  &:after {
+    clear:both;
+    display: table;
+    content:"";
+  }
+}
+
+/* Blocks */
+
+.block {
+  border-left: 2px solid #e3e1df;
+  padding-left: 10px;
+  margin-bottom: 25px;
+}
+
+.block:hover {
+  border-left: 2px solid #c3bcb6 !important;
+}
+
+.block p, .block p label {
+  font-size: 11px;
+  line-height: 14px;
+  margin-top: 11px;
+}
+
+#main .intro {
+  float: left;
+  width: 250px;
+  margin: 0px 25px 0px 0px;
+  a.btn {
+    margin-top: 10px;
+  }
+}
+
+/* Forms & validation */
+
+/* http://stackoverflow.com/questions/15798594/angularjs-forms-validate-fields-after-user-has-left-field*/
+input.has-visited:not(:focus):required:invalid,
+textarea.has-visited:not(:focus):required:invalid,
+select.has-visited:not(:focus):required:invalid {
+  color: #b94a48;
+  border-color: #ee5f5b;
+}
+
+form span.validation {
+  display: none;
+}
+
+form span.has-visited.validation {
+  display: inline-block;
+}
+
+form span.validation.ok {
+  color: green;
+  font-size: 18px;
+}
+
+form [class*="span"]:first-of-type {
+  margin-left: 0;
+}
+
+form h4 {
+  margin-bottom: 20px;
+}
+
+form .input-append .validation {
+  font-size: 12px;
+}
+
+/* Login form */
+
+@-webkit-keyframes login-bounce {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  40% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  60% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  80% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes login-bounce {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  40% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  60% {
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+  }
+  80% {
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+#login-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #fffce9;
+  text-align: center;
+
+  .login-form {
+    position: absolute;
+    top: 50%; left: 50%;
+    margin: -151px 0 0 -180px;
+    border: 1px solid #ece9d8;
+    width: 360px;
+    padding-top: 25px;
+    background: #fffef8;
+
+    &:before {
+      position: absolute;
+      top: -126px; left: 0;
+      width: 100%; height: 125px;
+      background: url('../images/login-cat.png') center center no-repeat;
+      content: '';
+    }
+
+    &.login-error {
+      .text-error {
+        display: block;
+      }
+
+      .field {
+        border-color: #d40000 !important;
+      }
+    }
+
+    &.login-animate {
+      -webkit-animation: login-bounce 400ms ease-in-out;
+      animation: login-bounce 400ms ease-in-out;
+    }
+  }
+
+  .text-error {
+    display: none;
+    margin: -10px auto 15px auto;
+    width: 250px;
+    font-size: 14px;
+    color: #d40000;
+  }
+
+  .title {
+    margin: 0 0 15px 0;
+    font-family: 'latolight', sans-serif;
+    font-size: 24px;
+  }
+
+  .field {
+    display: block;
+    margin: 0 auto 15px auto;
+    border: 1px solid #ccc !important;
+    border-radius: 4px;
+    width: 218px; height: 38px !important;
+    padding: 0 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+
+    -webkit-box-shadow: none;
+    box-shadow: none;
+
+    &::-webkit-input-placeholder { color: #ccc; opacity: 1; }
+    &::-moz-placeholder { color: #ccc; opacity: 1; }
+    &:-ms-input-placeholder { color: #ccc; opacity: 1; }
+    &:-moz-placeholder { color: #ccc; opacity: 1; }
+  }
+
+  .checkbox-container {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 218px;
+    text-align: left;
+    font-size: 14px;
+
+    input {
+      width: 0;
+      opacity: 0;
+    }
+
+    .checkbox-icon {
+      vertical-align: middle;
+      display: inline-block;
+      margin: -2px 4px 0 0;
+      width: 12px; height: 13px;
+      background: url('../images/checkbox-unchecked.png') left top;
+    }
+
+    input:checked + .checkbox-icon {
+      background-image: url('../images/checkbox-checked.png');
+    }
+  }
+
+  .btn {
+    margin-bottom: 30px;
+  }
+}
+
+/* Icons */
+
+.icon-collapse {
+  background-image: url("/common/images/collapse-icon.png");
+  background-position: center center;
+}
+
+.icon-expand {
+  background-image: url("/common/images/expand-icon.png");
+  background-position: center center;
+}
+
+.icon-delete {
+  background-image: url("/common/images/remove-icon.png");
+  background-position: center center;
+  background-size: 14px;
+}
